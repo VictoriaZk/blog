@@ -109,6 +109,15 @@
       <artifactId>momentjs</artifactId>
       <version>2.24.0</version>
     </dependency>
+
+    <!-- https://mvnrepository.com/artifact/org.springframework/spring-tx -->
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-tx</artifactId>
+      <version>5.2.6.RELEASE</version>
+    </dependency>
+
+
   </dependencies>
 
   <build>
