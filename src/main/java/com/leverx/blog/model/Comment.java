@@ -11,6 +11,7 @@ import java.util.Date;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Entity
 public class Comment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -19,15 +20,9 @@ public class Comment {
     @Column
     private String message;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = {
-            CascadeType.DETACH,
-            CascadeType.REFRESH})
     @Column
     private Integer post_id;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = {
-            CascadeType.DETACH,
-            CascadeType.REFRESH})
     @Column
     private Integer author_id;
 

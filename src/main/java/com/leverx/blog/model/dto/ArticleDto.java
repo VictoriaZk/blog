@@ -1,6 +1,5 @@
 package com.leverx.blog.model.dto;
 
-import com.leverx.blog.model.Status;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -17,7 +16,7 @@ public class ArticleDto {
 
     private String text;
 
-    private Status status;
+    private String status;
 
     private Integer author_id;
 

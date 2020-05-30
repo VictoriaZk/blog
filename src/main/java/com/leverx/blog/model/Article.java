@@ -11,6 +11,7 @@ import java.util.Date;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Entity
 public class Article {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,11 +24,9 @@ public class Article {
     private String text;
 
     @Column
-    private Status status;
+    private String status;
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = {
-            CascadeType.DETACH,
-            CascadeType.REFRESH})
+    @Column
     private Integer author_id;
 
     @Column
@@ -37,5 +36,6 @@ public class Article {
     @Column
     @DateTimeFormat(pattern = "yyyy/MM/dd")
     private Date updated_at;
+
 
 }
