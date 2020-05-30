@@ -9,7 +9,7 @@ public class CommentDtoConverter implements DtoConverter<Comment, CommentDto> {
     @Override
     public CommentDto convert(Comment comment) {
         CommentDto commentDto = new CommentDto();
-        if(comment != null){
+        if (comment != null) {
             commentDto.setId(comment.getId());
             commentDto.setMessage(comment.getMessage());
             commentDto.setPost_id(comment.getPost_id());
@@ -22,7 +22,7 @@ public class CommentDtoConverter implements DtoConverter<Comment, CommentDto> {
     @Override
     public Comment unconvert(CommentDto commentDto) {
         Comment comment = new Comment();
-        if(commentDto != null){
+        if (commentDto != null) {
             comment.setId(commentDto.getId());
             comment.setMessage(commentDto.getMessage());
             comment.setPost_id(commentDto.getPost_id());

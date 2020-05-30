@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 public class StartController {
 
     @GetMapping("/")
-    public String hello(){
+    public String hello() {
         return "start";
     }
 }
