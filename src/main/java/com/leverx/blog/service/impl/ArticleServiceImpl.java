@@ -71,4 +71,22 @@ public class ArticleServiceImpl implements ArticleService {
                 .map(articleDtoConverter::convert)
                 .collect(Collectors.toList());
     }
+
+    public List<ArticleDto> findByName(String name) {
+        return articleRepository.findByName(name).stream()
+                .map(articleDtoConverter::convert)
+                .collect(Collectors.toList());
+    }
+
+    public List<ArticleDto> findByStatus(String status) {
+        return articleRepository.findByStatus(status).stream()
+                .map(articleDtoConverter::convert)
+                .collect(Collectors.toList());
+    }
+
+    public List<ArticleDto> findAllSortByName() {
+        return articleRepository.findAllSortByName().stream()
+                .map(articleDtoConverter::convert)
+                .collect(Collectors.toList());
+    }
 }

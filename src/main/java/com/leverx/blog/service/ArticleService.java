@@ -17,4 +17,10 @@ public interface ArticleService {
 
     List<ArticleDto> findAll();
 
+    List<ArticleDto> findByStatus(String status);
+
+    List<ArticleDto> findByName(String name);
+
+    List<ArticleDto> findAllSortByName();
+
 }

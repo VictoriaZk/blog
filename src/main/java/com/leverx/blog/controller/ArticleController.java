@@ -27,8 +27,25 @@ public class ArticleController {
     @GetMapping(value = "/{id}")
     public ResponseEntity<ArticleDto> getArticle(@PathVariable("id") Integer id) {
         ArticleDto articleDto = articleService.findById(id);
-        System.out.println(articleDto);
         return new ResponseEntity<>(articleDto, HttpStatus.OK);
+    }
+
+    @GetMapping(value = "/name/{name}")
+    public ResponseEntity<List<ArticleDto>> getArticleByName(@PathVariable("name") String name) {
+        List<ArticleDto> articles = articleService.findByName(name);
+        return new ResponseEntity<>(articles, HttpStatus.OK);
+    }
+
+    @GetMapping(value = "/status/{status}")
+    public ResponseEntity<List<ArticleDto>> getArticleByStatus(@PathVariable("status") String status) {
+        List<ArticleDto> articles = articleService.findByStatus(status);
+        return new ResponseEntity<>(articles, HttpStatus.OK);
+    }
+
+    @GetMapping(value = "/sort")
+    public ResponseEntity<List<ArticleDto>> getArticleBSortByName() {
+        List<ArticleDto> articles = articleService.findAllSortByName();
+        return new ResponseEntity<>(articles, HttpStatus.OK);
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)

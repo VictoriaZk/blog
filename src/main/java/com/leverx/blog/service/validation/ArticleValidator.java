@@ -27,10 +27,10 @@ public class ArticleValidator {
     }
 
     public void validateUniqueArticleNameOnCreate(ArticleDto articleDto) {
-        articleRepository.findByName(articleDto.getTitle())
+        /*articleRepository.findByName(articleDto.getTitle())
                 .ifPresent(article -> {
                     throw new NameAlreadyExistException(ARTICLE_NAME_ALREADY_EXIST + article.getTitle());
-                });
+                });*/
     }
 
 

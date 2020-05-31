@@ -16,5 +16,9 @@ public interface ArticleRepository {
 
     List<Article> findAll();
 
-    Optional<Article> findByName(String name);
+    List<Article> findByStatus(String status);
+
+    List<Article> findByName(String name);
+
+    List<Article> findAllSortByName();
 }
