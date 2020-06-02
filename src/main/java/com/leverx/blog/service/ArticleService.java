@@ -17,10 +17,14 @@ public interface ArticleService {
 
     List<ArticleDto> findAll();
 
+    List<ArticleDto> findAllPublicArticles();
+
+    List<ArticleDto> findAllSortByName(String sortBy, String orderSort);
+
     List<ArticleDto> findByStatus(String status);
 
     List<ArticleDto> findByName(String name);
 
-    List<ArticleDto> findAllSortByName();
+    List<ArticleDto> findArticlesByTags(List<String>tags);
 
 }

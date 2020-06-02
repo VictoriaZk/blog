@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class ArticleValidator {
-    public static final String ARTICLE_NAME_ALREADY_EXIST = "CERTIFICATE_NAME_ALREADY_EXIST ";
+    public static final String ARTICLE_NAME_ALREADY_EXIST = "Article title already exits! ";
     private ArticleRepository articleRepository;
 
     public ArticleValidator(ArticleRepository articleRepository) {
@@ -27,10 +27,11 @@ public class ArticleValidator {
     }
 
     public void validateUniqueArticleNameOnCreate(ArticleDto articleDto) {
-        /*articleRepository.findByName(articleDto.getTitle())
+        articleRepository.findByName(articleDto.getTitle()).stream()
+                .findAny()
                 .ifPresent(article -> {
                     throw new NameAlreadyExistException(ARTICLE_NAME_ALREADY_EXIST + article.getTitle());
-                });*/
+                });
     }
 
 
