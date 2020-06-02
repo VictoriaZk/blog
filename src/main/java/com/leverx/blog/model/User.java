@@ -31,6 +31,6 @@ public class User {
 
     @Column
     @DateTimeFormat(pattern = "yyyy/MM/dd")
-    private Date created_ac;
+    private Date created_at;
 
 }

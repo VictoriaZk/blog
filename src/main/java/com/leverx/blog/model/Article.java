@@ -7,6 +7,8 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 @Data
 @NoArgsConstructor
@@ -26,10 +28,11 @@ public class Article {
     @Column
     private String status;
 
-    @Column
-    private Integer author_id;
+    @JoinColumn(name = "author_id")
+    @ManyToOne(cascade = {CascadeType.REFRESH})
+    private User user;
 
-    @Column
+    @Column(updatable = false)
     @DateTimeFormat(pattern = "yyyy/MM/dd")
     private Date created_at;
 
@@ -37,5 +40,10 @@ public class Article {
     @DateTimeFormat(pattern = "yyyy/MM/dd")
     private Date updated_at;
 
+    @JoinTable(name = "article_tag",
+            joinColumns = @JoinColumn(name = "tag_id"),
+            inverseJoinColumns = @JoinColumn(name = "article_id"))
+    @ManyToMany(targetEntity = Tag.class, cascade = {CascadeType.MERGE, CascadeType.REFRESH})
+    private Set<Tag> tagSet = new HashSet<>();
 
 }

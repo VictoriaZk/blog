@@ -20,11 +20,13 @@ public class Comment {
     @Column
     private String message;
 
-    @Column
-    private Integer post_id;
+    @JoinColumn(name = "post_id")
+    @ManyToOne(cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
+    private Article article;
 
-    @Column
-    private Integer author_id;
+    @JoinColumn(name = "author_id")
+    @ManyToOne(cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
+    private User user;
 
     @Column
     @DateTimeFormat(pattern = "yyyy/MM/dd")
