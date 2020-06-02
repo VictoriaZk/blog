@@ -1,28 +1,30 @@
 package com.leverx.blog.controller;
 
 import com.leverx.blog.model.dto.ArticleDto;
+import com.leverx.blog.model.dto.CommentDto;
 import com.leverx.blog.service.ArticleService;
+import com.leverx.blog.service.CommentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.sql.Date;
 import java.util.List;
 
-@Controller
+@RestController
 @RequestMapping("/articles")
 public class ArticleController {
     private final ArticleService articleService;
+    private final CommentService commentService;
 
     @Autowired
-    public ArticleController(ArticleService articleService) {
+    public ArticleController(ArticleService articleService, CommentService commentService) {
         this.articleService = articleService;
+        this.commentService = commentService;
     }
-
 
     @GetMapping(value = "/{id}")
     public ResponseEntity<ArticleDto> getArticle(@PathVariable("id") Integer id) {
@@ -30,21 +32,24 @@ public class ArticleController {
         return new ResponseEntity<>(articleDto, HttpStatus.OK);
     }
 
-    @GetMapping(value = "/name/{name}")
-    public ResponseEntity<List<ArticleDto>> getArticleByName(@PathVariable("name") String name) {
-        List<ArticleDto> articles = articleService.findByName(name);
-        return new ResponseEntity<>(articles, HttpStatus.OK);
-    }
-
-    @GetMapping(value = "/status/{status}")
-    public ResponseEntity<List<ArticleDto>> getArticleByStatus(@PathVariable("status") String status) {
-        List<ArticleDto> articles = articleService.findByStatus(status);
-        return new ResponseEntity<>(articles, HttpStatus.OK);
-    }
-
-    @GetMapping(value = "/sort")
+    /*@GetMapping(value = "/sort")
     public ResponseEntity<List<ArticleDto>> getArticleBSortByName() {
         List<ArticleDto> articles = articleService.findAllSortByName();
+        return new ResponseEntity<>(articles, HttpStatus.OK);
+    }*/
+
+    @GetMapping(value = "/sort")
+    public ResponseEntity<List<ArticleDto>> getSortByNameArticles(
+            @RequestParam(value = "sortBy", required = false) String sortBy,
+            @RequestParam(value = "articleName", required = false) String articleName,
+            @RequestParam(value = "sortOrder", required = false) String sortOrder) {
+        List<ArticleDto> articlesDto = articleService.findAllSortByName(sortBy, sortOrder, articleName);
+        return new ResponseEntity<>(articlesDto, HttpStatus.OK);
+    }
+
+    @GetMapping
+    public ResponseEntity<List<ArticleDto>> getArticles() {
+        List<ArticleDto> articles = articleService.findAllPublicArticles();
         return new ResponseEntity<>(articles, HttpStatus.OK);
     }
 
@@ -56,7 +61,8 @@ public class ArticleController {
     }
 
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ArticleDto> updateArticle(@PathVariable("id") Integer id, @RequestBody ArticleDto articleDto) {
+    public ResponseEntity<ArticleDto> updateArticle(@PathVariable("id") Integer id,
+                                                    @RequestBody ArticleDto articleDto) {
         ArticleDto articleDTO = articleService.findById(id);
         articleDTO.setStatus(articleDto.getStatus());
         articleDTO.setTitle(articleDto.getTitle());
@@ -66,16 +72,38 @@ public class ArticleController {
         return new ResponseEntity<>(articleDto, HttpStatus.OK);
     }
 
-    @GetMapping
-    public ResponseEntity<List<ArticleDto>> getArticles() {
-        List<ArticleDto> articles = articleService.findAll();
-        return new ResponseEntity<>(articles, HttpStatus.OK);
-    }
-
     @DeleteMapping(value = "/{id}")
     public ResponseEntity deleteArticle(@PathVariable("id") Integer id) {
         articleService.remove(id);
         return new ResponseEntity(HttpStatus.NO_CONTENT);
+    }
+
+    @GetMapping(value = "/{id}/comments")
+    public ResponseEntity<List<CommentDto>> getComments(@PathVariable("id") Integer id) {
+        List<CommentDto> commentsDto = commentService.findAll(id);
+        return new ResponseEntity<>(commentsDto, HttpStatus.OK);
+    }
+
+    @GetMapping(value = "/{id1}/comments/{id2}")
+    public ResponseEntity<CommentDto> getComment(@PathVariable("id1") Integer articleId,
+                                                 @PathVariable("id2") Integer commentId) {
+        CommentDto commentDto = commentService.findById(articleId, commentId);
+        return new ResponseEntity<>(commentDto, HttpStatus.OK);
+    }
+
+    @PostMapping(value = "/{id}/comments", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<CommentDto> createArticle(@PathVariable("id") Integer articleId,
+                                                    @Valid @RequestBody CommentDto commentDto) {
+        commentDto.setId(null);
+        commentDto = commentService.create(articleId, commentDto);
+        return new ResponseEntity<>(commentDto, HttpStatus.CREATED);
+    }
+
+    @DeleteMapping(value = "/{id1}/comments/{id2}")
+    public ResponseEntity<CommentDto> deleteComment(@PathVariable("id1") Integer articleId,
+                                                    @PathVariable("id2") Integer commentId) {
+        commentService.remove(commentId);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
 }
