@@ -1,5 +1,9 @@
 package com.leverx.blog.repository;
 
-public interface UserRepository {
+import com.leverx.blog.model.User;
 
+import java.util.Optional;
+
+public interface UserRepository {
+    Optional<User> findById(Integer id);
 }
