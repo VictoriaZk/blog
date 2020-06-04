@@ -1,7 +1,9 @@
 package com.leverx.blog.service;
 
-import org.springframework.stereotype.Service;
+import com.leverx.blog.model.dto.UserDto;
 
-@Service
 public interface UserService {
+    UserDto create(UserDto userDto);
+
+    UserDto findById(Integer id);
 }

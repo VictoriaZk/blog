@@ -21,5 +21,7 @@ public class UserDto {
 
     private String email;
 
-    private Date created_ac;
+    private Date created_at;
+
+    private String role;
 }

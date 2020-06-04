@@ -1,4 +1,4 @@
-package com.leverx.blog.config;
+package com.leverx.blog.config.security;
 
 
 import com.leverx.blog.model.User;
@@ -15,9 +15,12 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collections;
 import java.util.List;
 
 @Configuration
@@ -62,8 +65,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         return new BCryptPasswordEncoder(4);
     }
 
+    @Service
     private static class UserService implements UserDetailsService {
 
+        public static final String INVALID_USERNAME_OR_PASSWORD = "Invalid username or password.";
         private final UserRepository userRepository;
 
         @Autowired
@@ -73,12 +78,20 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
         @Transactional(readOnly = true)
         @Override
-        public UserDetails loadUserByUsername(String userName) {
-          return null;
+        public UserDetails loadUserByUsername(String email) {
+            return userRepository.findByEmail(email).stream()
+                    .map(user -> new org.springframework.security.core.userdetails.User(
+                            user.getEmail(),
+                            user.getPassword(),
+                            getAuthority(user)
+
+                    ))
+                    .findAny()
+                    .orElseThrow(() -> new UsernameNotFoundException(INVALID_USERNAME_OR_PASSWORD));
         }
 
         private List<SimpleGrantedAuthority> getAuthority(User user) {
-            return null;
+            return Collections.singletonList(new SimpleGrantedAuthority(user.getRole()));
         }
     }
 }

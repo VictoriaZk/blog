@@ -15,7 +15,8 @@ public class UserDtoConverter implements DtoConverter<User, UserDto> {
             userDto.setLast_name(user.getLast_name());
             userDto.setPassword(user.getPassword());
             userDto.setEmail(user.getEmail());
-            userDto.setCreated_ac(user.getCreated_at());
+            userDto.setRole(user.getRole());
+            userDto.setCreated_at(user.getCreated_at());
         }
         return userDto;
     }
@@ -29,7 +30,8 @@ public class UserDtoConverter implements DtoConverter<User, UserDto> {
             user.setLast_name(userDto.getLast_name());
             user.setPassword(userDto.getPassword());
             user.setEmail(userDto.getEmail());
-            user.setCreated_at(userDto.getCreated_ac());
+            user.setRole(userDto.getRole());
+            user.setCreated_at(userDto.getCreated_at());
         }
         return user;
     }
