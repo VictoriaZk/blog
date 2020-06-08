@@ -7,7 +7,7 @@ import com.leverx.blog.repository.TagRepository;
 import com.leverx.blog.service.TagService;
 import com.leverx.blog.service.converter.TagDtoConverter;
 import com.leverx.blog.service.validation.TagValidator;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,18 +15,12 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@AllArgsConstructor
 public class TagServiceImpl implements TagService {
     private static final String THERE_IS_NO_TAG_WITH_ID_S = "There is no tag with id %s";
     private TagRepository tagRepository;
     private TagDtoConverter tagDtoConverter;
     private TagValidator tagValidator;
-
-    @Autowired
-    public TagServiceImpl(TagRepository tagRepository, TagDtoConverter tagDtoConverter, TagValidator tagValidator) {
-        this.tagRepository = tagRepository;
-        this.tagDtoConverter = tagDtoConverter;
-        this.tagValidator = tagValidator;
-    }
 
 
     @Transactional

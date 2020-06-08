@@ -6,7 +6,7 @@ import com.leverx.blog.model.dto.CommentDto;
 import com.leverx.blog.repository.CommentRepository;
 import com.leverx.blog.service.CommentService;
 import com.leverx.blog.service.converter.CommentDtoConverter;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -14,17 +14,12 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@AllArgsConstructor
 public class CommentServiceImpl implements CommentService {
     private static final String THERE_IS_NO_COMMENT_WITH_ID_S = "There is no comment with id %s ";
     private static final String CAN_NOT_CREATE_COMMENT = "Can not create comment!";
     private final CommentRepository commentRepository;
     private final CommentDtoConverter commentDtoConverter;
-
-    @Autowired
-    public CommentServiceImpl(CommentRepository commentRepository, CommentDtoConverter commentDtoConverter) {
-        this.commentRepository = commentRepository;
-        this.commentDtoConverter = commentDtoConverter;
-    }
 
     @Transactional
     @Override

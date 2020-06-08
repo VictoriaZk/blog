@@ -2,7 +2,7 @@ package com.leverx.blog.controller;
 
 import com.leverx.blog.model.dto.TagDto;
 import com.leverx.blog.service.TagService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -12,14 +12,10 @@ import javax.validation.Valid;
 import java.util.List;
 
 @RestController
+@AllArgsConstructor
 @RequestMapping(value = "/tags")
 public class TagController {
     private TagService tagService;
-
-    @Autowired
-    public TagController(TagService tagService) {
-        this.tagService = tagService;
-    }
 
     @GetMapping
     public ResponseEntity<List<TagDto>> getTags() {

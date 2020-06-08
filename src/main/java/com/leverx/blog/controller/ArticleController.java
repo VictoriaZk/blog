@@ -4,7 +4,7 @@ import com.leverx.blog.model.dto.ArticleDto;
 import com.leverx.blog.model.dto.CommentDto;
 import com.leverx.blog.service.ArticleService;
 import com.leverx.blog.service.CommentService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -15,16 +15,11 @@ import java.sql.Date;
 import java.util.List;
 
 @RestController
+@AllArgsConstructor
 @RequestMapping("/articles")
 public class ArticleController {
     private final ArticleService articleService;
     private final CommentService commentService;
-
-    @Autowired
-    public ArticleController(ArticleService articleService, CommentService commentService) {
-        this.articleService = articleService;
-        this.commentService = commentService;
-    }
 
     @GetMapping(value = "/{id}")
     public ResponseEntity<ArticleDto> getArticle(@PathVariable("id") Integer id) {

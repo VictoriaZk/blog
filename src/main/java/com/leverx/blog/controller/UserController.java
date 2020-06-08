@@ -4,7 +4,7 @@ import com.leverx.blog.model.dto.ArticleDto;
 import com.leverx.blog.model.dto.PageDto;
 import com.leverx.blog.model.dto.UserDto;
 import com.leverx.blog.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -15,14 +15,10 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 
 @RestController
+@AllArgsConstructor
 @RequestMapping(value = "/users")
 public class UserController {
     private UserService userService;
-
-    @Autowired
-    public UserController(UserService userService) {
-        this.userService = userService;
-    }
 
 
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
@@ -42,8 +38,8 @@ public class UserController {
     @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
     @GetMapping(value = "/articles", consumes = MediaType.APPLICATION_JSON_VALUE)
     public PageDto<ArticleDto> findUserArticles(Authentication authentication,
-                                                    @RequestParam(value = "page", required = false, defaultValue = "1") Integer page,
-                                                    @RequestParam(value = "limit", required = false, defaultValue = "3") Integer limit) {
+                                                @RequestParam(value = "page", required = false, defaultValue = "1") Integer page,
+                                                @RequestParam(value = "limit", required = false, defaultValue = "3") Integer limit) {
         String userName = authentication.getName();
         return userService.findUserArticles(userName, page, limit);
     }

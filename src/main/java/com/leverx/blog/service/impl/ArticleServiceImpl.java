@@ -9,7 +9,7 @@ import com.leverx.blog.repository.TagRepository;
 import com.leverx.blog.service.ArticleService;
 import com.leverx.blog.service.converter.ArticleDtoConverter;
 import com.leverx.blog.service.validation.ArticleValidator;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,6 +19,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
+@AllArgsConstructor
 public class ArticleServiceImpl implements ArticleService {
     private static final String THERE_IS_NO_ARTICLE_WITH_ID_S = "There is no article with id %s";
     private ArticleDtoConverter articleDtoConverter;
@@ -26,14 +27,6 @@ public class ArticleServiceImpl implements ArticleService {
     private ArticleValidator articleValidator;
     private TagRepository tagRepository;
 
-    @Autowired
-    public ArticleServiceImpl(ArticleDtoConverter articleDtoConverter, ArticleRepository articleRepository,
-                              ArticleValidator articleValidator, TagRepository tagRepository) {
-        this.articleDtoConverter = articleDtoConverter;
-        this.articleRepository = articleRepository;
-        this.articleValidator = articleValidator;
-        this.tagRepository = tagRepository;
-    }
 
     @Transactional
     @Override

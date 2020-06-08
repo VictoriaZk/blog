@@ -11,7 +11,7 @@ import com.leverx.blog.service.UserService;
 import com.leverx.blog.service.converter.ArticleDtoConverter;
 import com.leverx.blog.service.converter.UserDtoConverter;
 import com.leverx.blog.service.pages.PageImpl;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@AllArgsConstructor
 public class UserServiceImpl implements UserService {
     private static final String USER_NOT_FOUND_ID = "User with such id not found";
     private static final String USER_WITH_SUCH_EMAIL_EXIST = "User with such email already exist";
@@ -28,16 +29,6 @@ public class UserServiceImpl implements UserService {
     private UserDtoConverter userDtoConverter;
     private ArticleDtoConverter articleDtoConverter;
     private BCryptPasswordEncoder passwordEncoder;
-
-
-    @Autowired
-    public UserServiceImpl(UserRepository userRepository, UserDtoConverter userDtoConverter,
-                           ArticleDtoConverter articleDtoConverter, BCryptPasswordEncoder passwordEncoder) {
-        this.userRepository = userRepository;
-        this.userDtoConverter = userDtoConverter;
-        this.passwordEncoder = passwordEncoder;
-        this.articleDtoConverter = articleDtoConverter;
-    }
 
     @Transactional
     @Override
@@ -86,7 +77,7 @@ public class UserServiceImpl implements UserService {
                 .orElseThrow(() -> new ObjectNotFoundException(USER_NOT_FOUND_EMAIL + email));
 
          */
-        return  null;
+        return null;
     }
 
     @Transactional
