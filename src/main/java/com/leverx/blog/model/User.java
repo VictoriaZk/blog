@@ -33,7 +33,7 @@ public class User {
     @Column
     private String role;
 
-    @Column
+    @Column(updatable = false)
     @DateTimeFormat(pattern = "yyyy/MM/dd")
     private Date created_at;
 

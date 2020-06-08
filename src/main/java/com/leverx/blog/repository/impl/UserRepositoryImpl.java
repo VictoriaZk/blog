@@ -1,7 +1,9 @@
 package com.leverx.blog.repository.impl;
 
+import com.leverx.blog.model.Article;
 import com.leverx.blog.model.User;
 import com.leverx.blog.repository.UserRepository;
+import com.leverx.blog.service.pages.Page;
 import lombok.NoArgsConstructor;
 import org.springframework.stereotype.Repository;
 
@@ -14,7 +16,15 @@ import java.util.Optional;
 @Repository
 @NoArgsConstructor
 public class UserRepositoryImpl implements UserRepository {
-    public static final String SELECT_U_FROM_USER_U_WHERE_U_EMAIL_EMAIL = "select u from User u where u.email =:email";
+    private static final String SELECT_U_FROM_USER_U_WHERE_U_EMAIL_EMAIL =
+            "select u from User u where u.email =:email";
+    private static final String SELECT_A_FROM_ARTICLE_A_WHERE_A_USER_ID_USER_ID =
+            "SELECT a from Article a where a.user.id = :userId";
+    private static final String SELECT_A_FROM_ARTICLE_A_WHERE_A_USER_EMAIL_EMAIL =
+            "SELECT a from Article a where a.user.email = :email";
+    private static final String EMAIL = "email";
+    private static final String USER_ID = "userId";
+
     @PersistenceContext
     EntityManager entityManager;
 
@@ -29,10 +39,59 @@ public class UserRepositoryImpl implements UserRepository {
         return user.getId();
     }
 
+    @SuppressWarnings(value = "unchecked")
     @Override
     public List<User> findByEmail(String email) {
         Query query = entityManager.createQuery(SELECT_U_FROM_USER_U_WHERE_U_EMAIL_EMAIL);
-        query.setParameter("email", email);
+        query.setParameter(EMAIL, email);
         return query.getResultList();
+    }
+
+    @Override
+    public void delete(Integer id) {
+        User reference = entityManager.getReference(User.class, id);
+        entityManager.remove(reference);
+    }
+
+    @SuppressWarnings(value = "unchecked")
+    @Override
+    public List<Article> findUserArticles(String email, Page page) {
+            Query query = entityManager.createQuery(SELECT_A_FROM_ARTICLE_A_WHERE_A_USER_EMAIL_EMAIL);
+            query.setParameter(EMAIL, email);
+            Integer offset = page.getOffset();
+            Integer limit = page.getLimit();
+            return query
+                    .setFirstResult(offset * limit - limit)
+                    .setMaxResults(limit)
+                    .getResultList();
+    }
+
+    @SuppressWarnings(value = "unchecked")
+    @Override
+    public List<Article> findUserArticles(Integer id, Page page) {
+        Query query = entityManager.createQuery(SELECT_A_FROM_ARTICLE_A_WHERE_A_USER_ID_USER_ID);
+        query.setParameter(USER_ID, id);
+        Integer offset = page.getOffset();
+        Integer limit = page.getLimit();
+        return query
+                .setFirstResult(offset * limit - limit)
+                .setMaxResults(limit)
+                .getResultList();
+    }
+
+    @SuppressWarnings(value = "unchecked")
+    @Override
+    public Long amountOfUserArticles(String email) {
+        Query query = entityManager.createQuery(SELECT_A_FROM_ARTICLE_A_WHERE_A_USER_EMAIL_EMAIL);
+        query.setParameter(EMAIL, email);
+        return (long) query.getResultList().size();
+    }
+
+    @SuppressWarnings(value = "unchecked")
+    @Override
+    public Long amountOfUserArticles(Integer id) {
+        Query query = entityManager.createQuery(SELECT_A_FROM_ARTICLE_A_WHERE_A_USER_ID_USER_ID);
+        query.setParameter(USER_ID, id);
+        return (long) query.getResultList().size();
     }
 }
