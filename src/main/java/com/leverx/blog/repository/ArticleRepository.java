@@ -1,8 +1,6 @@
 package com.leverx.blog.repository;
 
 import com.leverx.blog.model.Article;
-import com.leverx.blog.service.sorting.SortProvider;
-import com.leverx.blog.service.specification.Specification;
 
 import java.util.List;
 import java.util.Optional;
@@ -26,5 +24,5 @@ public interface ArticleRepository {
 
     List<Article> findByTags(Integer id);
 
-    List<Article> findAllSortByTitle(Specification<Article> specification, SortProvider<Article> sortProvider);
+    List<Article> findAllSortByTitle();
 }

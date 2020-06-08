@@ -1,6 +1,5 @@
 package com.leverx.blog.controller;
 
-import com.leverx.blog.model.dto.ArticleDto;
 import com.leverx.blog.model.dto.TagDto;
 import com.leverx.blog.service.TagService;
 import org.springframework.beans.factory.annotation.Autowired;

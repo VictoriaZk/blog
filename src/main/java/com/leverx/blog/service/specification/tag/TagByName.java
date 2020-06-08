@@ -9,6 +9,7 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
 public class TagByName implements Specification<Tag> {
+    public static final String NAME = "name";
     private String tagName;
 
     public TagByName(String tagName) {
@@ -17,6 +18,6 @@ public class TagByName implements Specification<Tag> {
 
     @Override
     public Predicate[] toPredicate(Root<Tag> root, CriteriaQuery<Tag> criteriaQuery, CriteriaBuilder criteriaBuilder) {
-        return new Predicate[]{criteriaBuilder.and(criteriaBuilder.equal(root.get("name"), tagName))};
+        return new Predicate[]{criteriaBuilder.and(criteriaBuilder.equal(root.get(NAME), tagName))};
     }
 }

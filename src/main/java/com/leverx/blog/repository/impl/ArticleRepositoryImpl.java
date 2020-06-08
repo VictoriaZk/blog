@@ -2,8 +2,6 @@ package com.leverx.blog.repository.impl;
 
 import com.leverx.blog.model.Article;
 import com.leverx.blog.repository.ArticleRepository;
-import com.leverx.blog.service.sorting.SortProvider;
-import com.leverx.blog.service.specification.Specification;
 import lombok.NoArgsConstructor;
 import org.springframework.stereotype.Repository;
 
@@ -11,7 +9,10 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
-import javax.persistence.criteria.*;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Order;
+import javax.persistence.criteria.Root;
 import java.util.List;
 import java.util.Optional;
 
@@ -25,6 +26,8 @@ public class ArticleRepositoryImpl implements ArticleRepository {
             "SELECT a from Article a where a.title = :name";
     private static final String SELECT_A_FROM_ARTICLE_A_WHERE_A_STATUS_STATUS1 =
             "SELECT a from Article a where a.status = :status";
+    public static final String SELECT_ARTICLE_ID_FROM_ARTICLE_TAG =
+            "SELECT article_id FROM article_tag";
     private static final String NAME = "name";
     private static final String STATUS = "status";
     private static final String PUBLIC = "public";
@@ -82,9 +85,10 @@ public class ArticleRepositoryImpl implements ArticleRepository {
         return query.getResultList();
     }
 
+    //bad
     @Override
     public List<Article> findByTags(Integer tagId) {
-        Query query = entityManager.createNativeQuery("select article_id from article_tag");
+        Query query = entityManager.createNativeQuery(SELECT_ARTICLE_ID_FROM_ARTICLE_TAG);
         return query.getResultList();
     }
 
@@ -96,8 +100,9 @@ public class ArticleRepositoryImpl implements ArticleRepository {
         return query.getResultList();
     }
 
+    //bad
     @Override
-    public List<Article> findAllSortByTitle(Specification<Article> specification, SortProvider<Article> sortProvider) {
+    public List<Article> findAllSortByTitle() {
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         CriteriaQuery<Article> criteriaQuery = criteriaBuilder.createQuery(Article.class);
         Root<Article> root = criteriaQuery.from(Article.class);

@@ -8,9 +8,6 @@ import com.leverx.blog.repository.ArticleRepository;
 import com.leverx.blog.repository.TagRepository;
 import com.leverx.blog.service.ArticleService;
 import com.leverx.blog.service.converter.ArticleDtoConverter;
-import com.leverx.blog.service.sorting.ArticleSortProvider;
-import com.leverx.blog.service.specification.Specification;
-import com.leverx.blog.service.specification.article.ArticleByTitle;
 import com.leverx.blog.service.validation.ArticleValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -46,6 +43,7 @@ public class ArticleServiceImpl implements ArticleService {
         return articleDtoConverter.convert(article);
     }
 
+    //bad
     @Transactional
     @Override
     public ArticleDto create(ArticleDto articleDto) {
@@ -88,6 +86,7 @@ public class ArticleServiceImpl implements ArticleService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional
     @Override
     public List<ArticleDto> findAllPublicArticles() {
         return articleRepository.findAllPublicArticles().stream()
@@ -103,8 +102,10 @@ public class ArticleServiceImpl implements ArticleService {
                 .collect(Collectors.toList());
     }
 
+    //bad
+    @Transactional
     @Override
-    public List<ArticleDto> findArticlesByTags(List<String>tags) {
+    public List<ArticleDto> findArticlesByTags(List<String> tags) {
         articleRepository.findByTags(0);
         return null;
     }
@@ -119,9 +120,8 @@ public class ArticleServiceImpl implements ArticleService {
 
     @Transactional
     @Override
-    public List<ArticleDto> findAllSortByName(String sortBy, String orderSort) {
-        Specification<Article> articleSpecification = new ArticleByTitle(sortBy);
-        return articleRepository.findAllSortByTitle(articleSpecification, new ArticleSortProvider(sortBy, orderSort))
+    public List<ArticleDto> findAllSortByName() {
+        return articleRepository.findAllSortByTitle()
                 .stream()
                 .map(articleDtoConverter::convert)
                 .collect(Collectors.toList());

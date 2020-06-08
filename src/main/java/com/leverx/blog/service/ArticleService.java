@@ -19,12 +19,12 @@ public interface ArticleService {
 
     List<ArticleDto> findAllPublicArticles();
 
-    List<ArticleDto> findAllSortByName(String sortBy, String orderSort);
+    List<ArticleDto> findAllSortByName();
 
     List<ArticleDto> findByStatus(String status);
 
     List<ArticleDto> findByName(String name);
 
-    List<ArticleDto> findArticlesByTags(List<String>tags);
+    List<ArticleDto> findArticlesByTags(List<String> tags);
 
 }

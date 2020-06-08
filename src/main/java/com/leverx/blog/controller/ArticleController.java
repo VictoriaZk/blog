@@ -32,24 +32,22 @@ public class ArticleController {
         return new ResponseEntity<>(articleDto, HttpStatus.OK);
     }
 
-    /*@GetMapping(value = "/sort")
+    @GetMapping(value = "/sort")
     public ResponseEntity<List<ArticleDto>> getArticleBSortByName() {
         List<ArticleDto> articles = articleService.findAllSortByName();
         return new ResponseEntity<>(articles, HttpStatus.OK);
-    }*/
-
-    @GetMapping(value = "/sort")
-    public ResponseEntity<List<ArticleDto>> getSortByNameArticles(
-            @RequestParam(value = "sortBy", required = false) String sortBy,
-            @RequestParam(value = "articleName", required = false) String articleName,
-            @RequestParam(value = "sortOrder", required = false) String sortOrder) {
-        List<ArticleDto> articlesDto = articleService.findAllSortByName(sortBy, sortOrder, articleName);
-        return new ResponseEntity<>(articlesDto, HttpStatus.OK);
     }
 
     @GetMapping
     public ResponseEntity<List<ArticleDto>> getArticles() {
         List<ArticleDto> articles = articleService.findAllPublicArticles();
+        return new ResponseEntity<>(articles, HttpStatus.OK);
+    }
+
+
+    @GetMapping(value = "/my")
+    public ResponseEntity<List<ArticleDto>> getAllArticles() {
+        List<ArticleDto> articles = articleService.findAll();
         return new ResponseEntity<>(articles, HttpStatus.OK);
     }
 

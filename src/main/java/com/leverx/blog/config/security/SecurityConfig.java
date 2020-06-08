@@ -65,7 +65,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         return new BCryptPasswordEncoder(4);
     }
 
-    @Service
     private static class UserService implements UserDetailsService {
 
         public static final String INVALID_USERNAME_OR_PASSWORD = "Invalid username or password.";

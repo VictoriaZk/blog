@@ -21,14 +21,15 @@ public class Comment {
     private String message;
 
     @JoinColumn(name = "post_id")
-    @ManyToOne(cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
+    @ManyToOne(cascade = {CascadeType.REFRESH,
+            CascadeType.REMOVE})
     private Article article;
 
     @JoinColumn(name = "author_id")
     @ManyToOne(cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
     private User user;
 
-    @Column
+    @Column(updatable = false)
     @DateTimeFormat(pattern = "yyyy/MM/dd")
     private Date created_at;
 

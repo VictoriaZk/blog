@@ -14,5 +14,5 @@ public interface TagRepository {
 
     List<Tag> findAll();
 
-   void detachTagFromArticle(Integer id);
+    void detachTagFromArticle(Integer id);
 }
