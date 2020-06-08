@@ -34,7 +34,9 @@ public class CommentRepositoryImpl implements CommentRepository {
         Query query = entityManager.createQuery(SELECT_C_FROM_COMMENT_C_WHERE_C_ARTICLE_ID_ARTICLE_ID_AND_C_ID_COMMENT_ID);
         query.setParameter(ARTICLE_ID, articleId);
         query.setParameter(COMMENT_ID, commentId);
-        return Optional.ofNullable((Comment) query.getSingleResult());
+        return query.getResultList().size() == 0 ?
+                Optional.empty() :
+                Optional.ofNullable((Comment)query.getSingleResult());
     }
 
     @Override
@@ -52,9 +54,11 @@ public class CommentRepositoryImpl implements CommentRepository {
 
     @SuppressWarnings(value = "unchecked")
     @Override
-    public List<Comment> findAll(Integer id) {
+    public Optional<List<Comment>> findAll(Integer id) {
         Query query = entityManager.createQuery(SELECT_C_FROM_COMMENT_C_WHERE_C_ARTICLE_ID_ARTICLE_ID);
         query.setParameter(ARTICLE_ID, id);
-        return query.getResultList();
+        return query.getResultList().size() == 0 ?
+                Optional.empty() :
+                Optional.ofNullable(query.getResultList());
     }
 }

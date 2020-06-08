@@ -18,6 +18,7 @@ import java.util.stream.Collectors;
 public class CommentServiceImpl implements CommentService {
     private static final String THERE_IS_NO_COMMENT_WITH_ID_S = "There is no comment with id %s ";
     private static final String CAN_NOT_CREATE_COMMENT = "Can not create comment!";
+    public static final String THERE_IS_NO_COMMENTS_FOR_ARTICLE = "There is no comments for article ";
     private final CommentRepository commentRepository;
     private final CommentDtoConverter commentDtoConverter;
 
@@ -59,8 +60,10 @@ public class CommentServiceImpl implements CommentService {
 
     @Transactional
     @Override
-    public List<CommentDto> findAll(Integer id) {
-        return commentRepository.findAll(id).stream()
+    public List<CommentDto> findAll(Integer articleId) {
+        List<Comment> comments= commentRepository.findAll(articleId)
+                .orElseThrow(() -> new ServiceException(String.format(THERE_IS_NO_COMMENTS_FOR_ARTICLE, articleId)));
+        return  comments.stream()
                 .map(commentDtoConverter::convert)
                 .collect(Collectors.toList());
     }

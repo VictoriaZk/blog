@@ -31,7 +31,7 @@ public class Article {
     private String status;
 
     @JoinColumn(name = "author_id")
-    @ManyToOne(cascade = {CascadeType.REFRESH})
+    @ManyToOne(fetch = FetchType.EAGER)
     @OnDelete(action = OnDeleteAction.CASCADE)
     private User user;
 
@@ -46,7 +46,7 @@ public class Article {
     @JoinTable(name = "article_tag",
             joinColumns = @JoinColumn(name = "tag_id"),
             inverseJoinColumns = @JoinColumn(name = "article_id"))
-    @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.MERGE, CascadeType.REFRESH})
+    @ManyToMany(fetch = FetchType.EAGER)
     private Set<Tag> tagSet = new HashSet<>();
 
 }

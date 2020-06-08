@@ -5,6 +5,7 @@ import com.leverx.blog.model.Article;
 import com.leverx.blog.model.Tag;
 import com.leverx.blog.model.dto.ArticleDto;
 import com.leverx.blog.repository.ArticleRepository;
+import com.leverx.blog.repository.CommentRepository;
 import com.leverx.blog.repository.TagRepository;
 import com.leverx.blog.service.ArticleService;
 import com.leverx.blog.service.converter.ArticleDtoConverter;
@@ -26,6 +27,7 @@ public class ArticleServiceImpl implements ArticleService {
     private ArticleRepository articleRepository;
     private ArticleValidator articleValidator;
     private TagRepository tagRepository;
+    private CommentRepository commentRepository;
 
 
     @Transactional
@@ -65,6 +67,11 @@ public class ArticleServiceImpl implements ArticleService {
     @Transactional
     @Override
     public void remove(Integer id) {
+        commentRepository
+                .findAll(id)
+                .ifPresent(comments -> comments.forEach(
+                        comment -> commentRepository.delete(comment.getId())
+                ));
         articleRepository
                 .findById(id)
                 .ifPresent(article -> articleRepository.delete(id));

@@ -23,13 +23,12 @@ public class Comment {
     private String message;
 
     @JoinColumn(name = "post_id")
-    @ManyToOne(cascade = {CascadeType.REFRESH,
-            CascadeType.REMOVE})
+    @ManyToOne(fetch = FetchType.EAGER)
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Article article;
 
     @JoinColumn(name = "author_id")
-    @ManyToOne(cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
+    @ManyToOne(fetch = FetchType.EAGER)
     @OnDelete(action = OnDeleteAction.CASCADE)
     private User user;
 
