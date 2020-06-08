@@ -15,7 +15,7 @@ public class TagValidator {
     }
 
     public void validateUniqueATagName(TagDto tagDto) {
-        tagRepository.findAll().stream()
+        tagRepository.findAll().get().stream()
                 .map(tag -> {
                     if (tag.getName().equals(tagDto.getName()) &&
                             !tag.getId().equals(tagDto.getId())) {

@@ -45,10 +45,9 @@ public class ArticleServiceImpl implements ArticleService {
         Set<Tag> attachedTags = new HashSet<>();
         article
                 .getTagSet()
-                .forEach(tag -> tagRepository.findAll().stream()
-                        .map(attachedTags::add)
-                        .findAny()
-                        .orElseGet(() -> attachedTags.add(tag)));
+                .forEach(tag -> {
+                    attachedTags.add(tagRepository.findByName(tag.getName()).orElse(tagRepository.findById(tagRepository.create(tag)).get()));
+                });
         article.setTagSet(attachedTags);
         Integer articleId = articleRepository.create(article);
         return findById(articleId);

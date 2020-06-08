@@ -12,7 +12,9 @@ public interface TagRepository {
 
     void delete(Integer id);
 
-    List<Tag> findAll();
+    Optional<List<Tag>> findAll();
 
     void detachTagFromArticle(Integer id);
+
+    Optional<Tag> findByName(String name);
 }

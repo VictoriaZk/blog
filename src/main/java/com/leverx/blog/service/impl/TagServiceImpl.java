@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -36,8 +37,8 @@ public class TagServiceImpl implements TagService {
     public TagDto create(TagDto tagDto) {
         tagValidator.validateUniqueATagName(tagDto);
         Tag tag = tagDtoConverter.unconvert(tagDto);
-        Integer articleId = tagRepository.create(tag);
-        return findById(articleId);
+        Integer tagId = tagRepository.create(tag);
+        return findById(tagId);
     }
 
     @Transactional
@@ -52,9 +53,14 @@ public class TagServiceImpl implements TagService {
     @Transactional
     @Override
     public List<TagDto> findAll() {
-        return tagRepository.findAll().stream()
-                .map(tagDtoConverter::convert)
-                .collect(Collectors.toList());
+        return tagRepository.findAll().get().stream()
+                .map(tagDtoConverter::convert).collect(Collectors.toList());
     }
+
+    @Override
+    public TagDto findByName(String name) {
+        return tagDtoConverter.convert(tagRepository.findByName(name).get());
+    }
+
 
 }
