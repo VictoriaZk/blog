@@ -11,8 +11,9 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashMap;
 import java.util.List;
-import java.util.Optional;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -57,10 +58,20 @@ public class TagServiceImpl implements TagService {
                 .map(tagDtoConverter::convert).collect(Collectors.toList());
     }
 
+    @Transactional
     @Override
     public TagDto findByName(String name) {
         return tagDtoConverter.convert(tagRepository.findByName(name).get());
     }
 
+    @Transactional
+    @Override
+    public Map<String, Integer> amountOfArticlesWithGivenTag(Integer id) {
+        Map<String, Integer> tags = new HashMap<>();
+        Integer amountOfArticles = tagRepository.amountOfArticlesWithGivenTag(id);
+        String name = tagRepository.findById(id).get().getName();
+        tags.put(name, amountOfArticles);
+        return tags;
+    }
 
 }

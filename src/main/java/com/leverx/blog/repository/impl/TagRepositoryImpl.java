@@ -13,13 +13,18 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Repository
 @NoArgsConstructor
 public class TagRepositoryImpl implements TagRepository {
     private static final String DETACH_TAG_FROM_ARTICLE_SQL_BY_TAG_ID =
-            "delete from article_tag where tag_id = :tagId";
+            "delete t from article_tag t where tag_id = :tagId";
+    private static final String SELECT_T_FROM_TAG_T_WHERE_T_NAME_NAME =
+            "SELECT t FROM Tag t WHERE t.name =:name";
+    private static final String SELECT_FROM_ARTICLE_TAG_WHERE_TAG_ID =
+            "SELECT * FROM article_tag WHERE tag_id = ?";
 
     @PersistenceContext
     EntityManager entityManager;
@@ -63,10 +68,17 @@ public class TagRepositoryImpl implements TagRepository {
 
     @Override
     public Optional<Tag> findByName(String name) {
-        Query query = entityManager.createQuery("SELECT t FROM Tag t WHERE t.name =:name");
+        Query query = entityManager.createQuery(SELECT_T_FROM_TAG_T_WHERE_T_NAME_NAME);
         query.setParameter("name", name);
         return query.getResultList().size() == 0 ?
                 Optional.empty() :
                 query.getResultList().stream().findAny();
+    }
+
+    @Override
+    public int amountOfArticlesWithGivenTag(Integer tagId) {
+        Query query = entityManager.createNativeQuery(SELECT_FROM_ARTICLE_TAG_WHERE_TAG_ID);
+        query.setParameter(1, tagId);
+        return query.getResultList().size();
     }
 }

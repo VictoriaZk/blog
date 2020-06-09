@@ -3,6 +3,7 @@ package com.leverx.blog.service;
 import com.leverx.blog.model.dto.TagDto;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 public interface TagService {
@@ -15,4 +16,7 @@ public interface TagService {
     List<TagDto> findAll();
 
     TagDto findByName(String name);
+
+    Map<String, Integer> amountOfArticlesWithGivenTag(Integer id);
+
 }
