@@ -54,8 +54,11 @@ public class TagServiceImpl implements TagService {
     @Transactional
     @Override
     public List<TagDto> findAll() {
-        return tagRepository.findAll().get().stream()
-                .map(tagDtoConverter::convert).collect(Collectors.toList());
+        return tagRepository
+                .findAll()
+                .stream()
+                .map(tagDtoConverter::convert)
+                .collect(Collectors.toList());
     }
 
     @Transactional

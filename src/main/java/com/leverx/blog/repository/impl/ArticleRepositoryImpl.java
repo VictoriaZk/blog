@@ -118,6 +118,5 @@ public class ArticleRepositoryImpl implements ArticleRepository {
         criteriaQuery.where(predicates);*/
         return entityManager.createQuery(criteriaQuery)
                 .getResultList();
-
     }
 }

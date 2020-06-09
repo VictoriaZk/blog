@@ -14,12 +14,12 @@ import java.util.Optional;
 @Repository
 @NoArgsConstructor
 public class CommentRepositoryImpl implements CommentRepository {
-    public static final String SELECT_C_FROM_COMMENT_C_WHERE_C_ARTICLE_ID_ARTICLE_ID_AND_C_ID_COMMENT_ID =
+    private static final String SELECT_C_FROM_COMMENT_C_WHERE_C_ARTICLE_ID_ARTICLE_ID_AND_C_ID_COMMENT_ID =
             "SELECT c from Comment c where c.article.id = :articleId AND c.id =:commentId";
-    public static final String SELECT_C_FROM_COMMENT_C_WHERE_C_ARTICLE_ID_ARTICLE_ID =
+    private static final String SELECT_C_FROM_COMMENT_C_WHERE_C_ARTICLE_ID_ARTICLE_ID =
             "SELECT c from Comment c where c.article.id = :articleId";
-    public static final String ARTICLE_ID = "articleId";
-    public static final String COMMENT_ID = "commentId";
+    private static final String ARTICLE_ID = "articleId";
+    private static final String COMMENT_ID = "commentId";
 
     @PersistenceContext
     EntityManager entityManager;
@@ -36,7 +36,7 @@ public class CommentRepositoryImpl implements CommentRepository {
         query.setParameter(COMMENT_ID, commentId);
         return query.getResultList().size() == 0 ?
                 Optional.empty() :
-                Optional.ofNullable((Comment)query.getSingleResult());
+                Optional.ofNullable((Comment) query.getSingleResult());
     }
 
     @Override
@@ -54,11 +54,9 @@ public class CommentRepositoryImpl implements CommentRepository {
 
     @SuppressWarnings(value = "unchecked")
     @Override
-    public Optional<List<Comment>> findAll(Integer id) {
+    public List<Comment> findAll(Integer id) {
         Query query = entityManager.createQuery(SELECT_C_FROM_COMMENT_C_WHERE_C_ARTICLE_ID_ARTICLE_ID);
         query.setParameter(ARTICLE_ID, id);
-        return query.getResultList().size() == 0 ?
-                Optional.empty() :
-                Optional.ofNullable(query.getResultList());
+        return query.getResultList();
     }
 }

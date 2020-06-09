@@ -4,7 +4,6 @@ import com.leverx.blog.model.dto.TagDto;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 public interface TagService {
     TagDto findById(Integer id);

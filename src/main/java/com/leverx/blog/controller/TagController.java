@@ -9,10 +9,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 @RestController
@@ -22,7 +20,7 @@ public class TagController {
     private TagService tagService;
 
     @GetMapping(value = "/cloud")
-    public ResponseEntity<List<Map<String, Integer>>> getCloudOfTags(){
+    public ResponseEntity<List<Map<String, Integer>>> getCloudOfTags() {
         List<TagDto> tags = tagService.findAll();
         List<Map<String, Integer>> tagsCloud = tags.stream()
                 .map(tagDto -> tagService.amountOfArticlesWithGivenTag(tagDto.getId()))

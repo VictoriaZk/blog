@@ -1,10 +1,8 @@
 package com.leverx.blog.repository;
 
 import com.leverx.blog.model.Tag;
-import com.leverx.blog.model.dto.TagDto;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 public interface TagRepository {
@@ -14,7 +12,7 @@ public interface TagRepository {
 
     void delete(Integer id);
 
-    Optional<List<Tag>> findAll();
+    List<Tag> findAll();
 
     void detachTagFromArticle(Integer id);
 

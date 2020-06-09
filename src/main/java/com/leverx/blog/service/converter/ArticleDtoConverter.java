@@ -4,20 +4,17 @@ import com.leverx.blog.model.Article;
 import com.leverx.blog.model.dto.ArticleDto;
 import com.leverx.blog.model.dto.TagDto;
 import com.leverx.blog.repository.UserRepository;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.util.Set;
 import java.util.stream.Collectors;
 
 @Component
+@AllArgsConstructor
 public class ArticleDtoConverter implements DtoConverter<Article, ArticleDto> {
     private UserRepository userRepository;
     private TagDtoConverter tagDtoConverter;
-
-    public ArticleDtoConverter(UserRepository userRepository, TagDtoConverter tagDtoConverter) {
-        this.userRepository = userRepository;
-        this.tagDtoConverter = tagDtoConverter;
-    }
 
     @Override
     public ArticleDto convert(Article article) {

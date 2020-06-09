@@ -32,7 +32,6 @@ public class Article {
 
     @JoinColumn(name = "author_id")
     @ManyToOne(fetch = FetchType.EAGER)
-    @OnDelete(action = OnDeleteAction.CASCADE)
     private User user;
 
     @Column(updatable = false)
@@ -47,6 +46,7 @@ public class Article {
             joinColumns = @JoinColumn(name = "tag_id"),
             inverseJoinColumns = @JoinColumn(name = "article_id"))
     @ManyToMany(fetch = FetchType.EAGER)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private Set<Tag> tagSet = new HashSet<>();
 
 }

@@ -4,17 +4,14 @@ import com.leverx.blog.model.Comment;
 import com.leverx.blog.model.dto.CommentDto;
 import com.leverx.blog.repository.ArticleRepository;
 import com.leverx.blog.repository.UserRepository;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 
 @Component
+@AllArgsConstructor
 public class CommentDtoConverter implements DtoConverter<Comment, CommentDto> {
     private ArticleRepository articleRepository;
     private UserRepository userRepository;
-
-    public CommentDtoConverter(ArticleRepository articleRepository, UserRepository userRepository) {
-        this.articleRepository = articleRepository;
-        this.userRepository = userRepository;
-    }
 
     @Override
     public CommentDto convert(Comment comment) {

@@ -69,9 +69,7 @@ public class ArticleServiceImpl implements ArticleService {
     public void remove(Integer id) {
         commentRepository
                 .findAll(id)
-                .ifPresent(comments -> comments.forEach(
-                        comment -> commentRepository.delete(comment.getId())
-                ));
+                .forEach(comment -> commentRepository.delete(comment.getId()));
         articleRepository
                 .findById(id)
                 .ifPresent(article -> articleRepository.delete(id));
@@ -80,7 +78,9 @@ public class ArticleServiceImpl implements ArticleService {
     @Transactional
     @Override
     public List<ArticleDto> findAll() {
-        return articleRepository.findAll().stream()
+        return articleRepository
+                .findAll()
+                .stream()
                 .map(articleDtoConverter::convert)
                 .collect(Collectors.toList());
     }
@@ -88,7 +88,9 @@ public class ArticleServiceImpl implements ArticleService {
     @Transactional
     @Override
     public List<ArticleDto> findAllPublicArticles() {
-        return articleRepository.findAllPublicArticles().stream()
+        return articleRepository
+                .findAllPublicArticles()
+                .stream()
                 .map(articleDtoConverter::convert)
                 .collect(Collectors.toList());
     }
@@ -96,7 +98,9 @@ public class ArticleServiceImpl implements ArticleService {
     @Transactional
     @Override
     public List<ArticleDto> findByName(String name) {
-        return articleRepository.findByName(name).stream()
+        return articleRepository.
+                findByName(name)
+                .stream()
                 .map(articleDtoConverter::convert)
                 .collect(Collectors.toList());
     }
@@ -112,7 +116,9 @@ public class ArticleServiceImpl implements ArticleService {
     @Transactional
     @Override
     public List<ArticleDto> findByStatus(String status) {
-        return articleRepository.findByStatus(status).stream()
+        return articleRepository
+                .findByStatus(status)
+                .stream()
                 .map(articleDtoConverter::convert)
                 .collect(Collectors.toList());
     }
@@ -120,7 +126,8 @@ public class ArticleServiceImpl implements ArticleService {
     @Transactional
     @Override
     public List<ArticleDto> findAllSortByName() {
-        return articleRepository.findAllSortByTitle()
+        return articleRepository
+                .findAllSortByTitle()
                 .stream()
                 .map(articleDtoConverter::convert)
                 .collect(Collectors.toList());

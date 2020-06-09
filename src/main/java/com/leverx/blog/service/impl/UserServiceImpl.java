@@ -33,7 +33,9 @@ public class UserServiceImpl implements UserService {
     @Transactional
     @Override
     public UserDto create(UserDto userDto) {
-        userRepository.findByEmail(userDto.getEmail()).stream().findAny()
+        userRepository.findByEmail(userDto.getEmail())
+                .stream()
+                .findAny()
                 .ifPresent(user -> {
                     throw new NameAlreadyExistException(USER_WITH_SUCH_EMAIL_EXIST
                             + user.getEmail());
@@ -48,7 +50,8 @@ public class UserServiceImpl implements UserService {
     @Transactional
     @Override
     public UserDto findById(Integer id) {
-        return userRepository.findById(id)
+        return userRepository
+                .findById(id)
                 .map(userDtoConverter::convert)
                 .orElseThrow(() -> new ObjectNotFoundException(USER_NOT_FOUND_ID + id));
     }

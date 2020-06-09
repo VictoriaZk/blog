@@ -4,7 +4,7 @@ public class PageImpl implements Page {
     private Integer offset;
     private Integer limit;
 
-    public PageImpl(Integer offset, Integer limit){
+    public PageImpl(Integer offset, Integer limit) {
         this.offset = offset;
         this.limit = limit;
     }

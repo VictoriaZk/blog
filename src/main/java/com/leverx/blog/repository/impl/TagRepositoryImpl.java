@@ -13,18 +13,18 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 @Repository
 @NoArgsConstructor
 public class TagRepositoryImpl implements TagRepository {
     private static final String DETACH_TAG_FROM_ARTICLE_SQL_BY_TAG_ID =
-            "delete t from article_tag t where tag_id = :tagId";
+            "DELETE FROM article_tag WHERE tag_id = ?";
     private static final String SELECT_T_FROM_TAG_T_WHERE_T_NAME_NAME =
             "SELECT t FROM Tag t WHERE t.name =:name";
     private static final String SELECT_FROM_ARTICLE_TAG_WHERE_TAG_ID =
             "SELECT * FROM article_tag WHERE tag_id = ?";
+    private static final String NAME = "name";
 
     @PersistenceContext
     EntityManager entityManager;
@@ -48,28 +48,27 @@ public class TagRepositoryImpl implements TagRepository {
     }
 
     @Override
-    public Optional<List<Tag>> findAll() {
+    public List<Tag> findAll() {
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         CriteriaQuery<Tag> criteriaQuery = criteriaBuilder.createQuery(Tag.class);
         Root<Tag> rootQuery = criteriaQuery.from(Tag.class);
         criteriaQuery.select(rootQuery);
         TypedQuery<Tag> query = entityManager.createQuery(criteriaQuery);
-        return query.getResultList().size() == 0 ?
-                Optional.empty() :
-                Optional.ofNullable(query.getResultList());
+        return query.getResultList();
     }
 
     @Override
     public void detachTagFromArticle(Integer tagId) {
         Query query = entityManager.createNativeQuery(DETACH_TAG_FROM_ARTICLE_SQL_BY_TAG_ID);
-        query.setParameter("tagId", tagId);
+        query.setParameter(1, tagId);
         query.executeUpdate();
     }
 
+    @SuppressWarnings(value = "unchecked")
     @Override
     public Optional<Tag> findByName(String name) {
         Query query = entityManager.createQuery(SELECT_T_FROM_TAG_T_WHERE_T_NAME_NAME);
-        query.setParameter("name", name);
+        query.setParameter(NAME, name);
         return query.getResultList().size() == 0 ?
                 Optional.empty() :
                 query.getResultList().stream().findAny();

@@ -14,5 +14,5 @@ public interface CommentRepository {
 
     void delete(Integer id);
 
-    Optional<List<Comment>> findAll(Integer id);
+    List<Comment> findAll(Integer id);
 }
