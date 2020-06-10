@@ -18,7 +18,7 @@ import org.springframework.security.oauth2.provider.token.store.JwtTokenStore;
 public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdapter {
 
     private static final String CLIENT_ID = "client";
-    private static final String CLIENT_SECRET = "$2a$04$Zf/RDydS9r7vjFHc1cykM.nLmUQnYKh4hjI1GgeTEWYR7t3PHP5W.";
+    private static final String CLIENT_SECRET = "$2a$10$r.ZMJz0kMf7oSgElqOCIue.kWXWA0xRL2ze4XHuFr3HJfeAiQIejW";
     private static final String PASSWORD_GRANT_TYPE = "password";
     private static final String REFRESH_TOKEN = "refresh_token";
     private static final String SCOPE_READ = "read";

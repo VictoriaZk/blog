@@ -52,8 +52,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .anonymous().disable()
                 .authorizeRequests()
-                .antMatchers("/").permitAll()
-                .antMatchers("/oauth/token").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .formLogin().permitAll();
@@ -77,15 +75,17 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         @Transactional(readOnly = true)
         @Override
         public UserDetails loadUserByUsername(String email) {
-            return userRepository.findByEmail(email).stream()
+            return userRepository.findByEmail(email)
                     .map(user -> new org.springframework.security.core.userdetails.User(
                             user.getEmail(),
                             user.getPassword(),
                             getAuthority(user)
-
                     ))
-                    .findAny()
                     .orElseThrow(() -> new UsernameNotFoundException(INVALID_USERNAME_OR_PASSWORD));
+//            String name = "vika.zhak1999";
+//            String password = "$2a$04$k/8K.hNYm6MDRhcXok8FiOLVCULs3zHGYNFfxKpfZ/RubyOGHCsuu";
+//            return new org.springframework.security.core.userdetails.User(name, password,
+//                    Collections.singletonList(new SimpleGrantedAuthority("ADMIN")));
         }
 
         private List<SimpleGrantedAuthority> getAuthority(User user) {
