@@ -1,13 +1,17 @@
 package com.leverx.blog.controller;
 
+import com.leverx.blog.model.User;
 import com.leverx.blog.model.dto.ArticleDto;
 import com.leverx.blog.model.dto.CommentDto;
 import com.leverx.blog.service.ArticleService;
 import com.leverx.blog.service.CommentService;
+import com.leverx.blog.service.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -20,6 +24,7 @@ import java.util.List;
 public class ArticleController {
     private final ArticleService articleService;
     private final CommentService commentService;
+    private final UserService userService;
 
     @GetMapping(value = "/{id}")
     public ResponseEntity<ArticleDto> getArticle(@PathVariable("id") Integer id) {
@@ -39,9 +44,9 @@ public class ArticleController {
         return new ResponseEntity<>(articles, HttpStatus.OK);
     }
 
-
+    @PreAuthorize(value = "hasAuthority('ADMIN')")
     @GetMapping(value = "/my")
-    public ResponseEntity<List<ArticleDto>> getAllArticles() {
+    public ResponseEntity<List<ArticleDto>> getAllArticles(Authentication authentication) {
         List<ArticleDto> articles = articleService.findAll();
         return new ResponseEntity<>(articles, HttpStatus.OK);
     }
@@ -92,10 +97,13 @@ public class ArticleController {
         return new ResponseEntity<>(commentDto, HttpStatus.CREATED);
     }
 
+    @PreAuthorize(value = "hasAuthority('ADMIN') or hasAuthority('USER')")
     @DeleteMapping(value = "/{id1}/comments/{id2}")
-    public ResponseEntity<CommentDto> deleteComment(@PathVariable("id1") Integer articleId,
+    public ResponseEntity<CommentDto> deleteComment(Authentication authentication,
+                                                    @PathVariable("id1") Integer articleId,
                                                     @PathVariable("id2") Integer commentId) {
-        commentService.remove(commentId);
+        String userName = authentication.getName();
+        commentService.remove(commentId, articleId, userName);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 

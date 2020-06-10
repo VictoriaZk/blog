@@ -1,6 +1,7 @@
 package com.leverx.blog.service;
 
 import com.leverx.blog.model.dto.CommentDto;
+import org.springframework.security.core.Authentication;
 
 import java.util.List;
 
@@ -11,7 +12,8 @@ public interface CommentService {
 
     CommentDto create(Integer id, CommentDto commentDto);
 
-    void remove(Integer id);
+    void remove(Integer commentId, Integer articleId, String username);
 
     List<CommentDto> findAll(Integer id);
+
 }

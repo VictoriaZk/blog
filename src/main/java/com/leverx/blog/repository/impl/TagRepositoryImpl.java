@@ -71,7 +71,7 @@ public class TagRepositoryImpl implements TagRepository {
         query.setParameter(NAME, name);
         return query.getResultList().size() == 0 ?
                 Optional.empty() :
-                query.getResultList().stream().findAny();
+                Optional.ofNullable((Tag)query.getSingleResult());
     }
 
     @Override

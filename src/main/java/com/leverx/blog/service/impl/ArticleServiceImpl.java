@@ -4,6 +4,7 @@ import com.leverx.blog.exception.ServiceException;
 import com.leverx.blog.model.Article;
 import com.leverx.blog.model.Tag;
 import com.leverx.blog.model.dto.ArticleDto;
+import com.leverx.blog.model.dto.TagDto;
 import com.leverx.blog.repository.ArticleRepository;
 import com.leverx.blog.repository.CommentRepository;
 import com.leverx.blog.repository.TagRepository;
@@ -14,6 +15,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -108,8 +110,12 @@ public class ArticleServiceImpl implements ArticleService {
     //bad
     @Transactional
     @Override
-    public List<ArticleDto> findArticlesByTags(List<String> tags) {
-        articleRepository.findByTags(0);
+    public List<ArticleDto> findArticlesByTags(List<TagDto> tags) {
+        /*return articleRepository
+                .findByTags(tags)
+                .stream()
+                .map(articleDtoConverter::convert)
+                .collect(Collectors.toList());*/
         return null;
     }
 

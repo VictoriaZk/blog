@@ -12,7 +12,7 @@ public interface UserRepository {
 
     Integer create(User user);
 
-    List<User> findByEmail(String email);
+    Optional<User> findByEmail(String email);
 
     void delete(Integer id);
 

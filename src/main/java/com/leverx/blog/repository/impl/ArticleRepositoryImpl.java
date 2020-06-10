@@ -1,6 +1,7 @@
 package com.leverx.blog.repository.impl;
 
 import com.leverx.blog.model.Article;
+import com.leverx.blog.model.Tag;
 import com.leverx.blog.repository.ArticleRepository;
 import lombok.NoArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -87,8 +88,9 @@ public class ArticleRepositoryImpl implements ArticleRepository {
 
     //bad
     @Override
-    public List<Article> findByTags(Integer tagId) {
-        Query query = entityManager.createNativeQuery(SELECT_ARTICLE_ID_FROM_ARTICLE_TAG);
+    public List<Article> findByTags(List<Tag> tags) {
+        Query query =  entityManager.createNativeQuery("SELECT * FROM article_tag WHERE tag_id = ?");
+        tags.stream().forEach(tag -> query.setParameter(1, tag.getId()));
         return query.getResultList();
     }
 

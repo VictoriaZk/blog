@@ -11,6 +11,8 @@ public interface UserService {
 
     void remove(Integer id);
 
+    UserDto findByEmail(String email);
+
     PageDto<ArticleDto> findUserArticles(Integer id, Integer currentPage, Integer pageSize);
 
     PageDto<ArticleDto> findUserArticles(String email, Integer currentPage, Integer pageSize);

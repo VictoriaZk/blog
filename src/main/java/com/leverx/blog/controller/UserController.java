@@ -1,5 +1,6 @@
 package com.leverx.blog.controller;
 
+import com.leverx.blog.model.Role;
 import com.leverx.blog.model.dto.ArticleDto;
 import com.leverx.blog.model.dto.PageDto;
 import com.leverx.blog.model.dto.UserDto;
@@ -23,19 +24,18 @@ public class UserController {
 
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<UserDto> createUser(@Valid @RequestBody UserDto userDto) {
-        userDto.setRole(userDto.getRole());
+        userDto.setRole(Role.ROLE_USER.toString());
         UserDto newUser = userService.create(userDto);
         return new ResponseEntity<>(newUser, HttpStatus.CREATED);
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize(value = "hasAuthority('ADMIN')")
     @DeleteMapping(value = "/{id}")
     public ResponseEntity deleteUser(@PathVariable Integer id) {
         userService.remove(id);
         return new ResponseEntity(HttpStatus.NO_CONTENT);
     }
 
-    @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
     @GetMapping(value = "/articles", consumes = MediaType.APPLICATION_JSON_VALUE)
     public PageDto<ArticleDto> findUserArticles(Authentication authentication,
                                                 @RequestParam(value = "page", required = false, defaultValue = "1") Integer page,
