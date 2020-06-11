@@ -8,7 +8,7 @@ import java.util.Optional;
 public interface TagRepository {
     Optional<Tag> findById(Integer id);
 
-    Integer create(Tag tag);
+    Tag create(Tag tag);
 
     void delete(Integer id);
 

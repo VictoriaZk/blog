@@ -35,10 +35,10 @@ public class TagRepositoryImpl implements TagRepository {
     }
 
     @Override
-    public Integer create(Tag tag) {
+    public Tag create(Tag tag) {
         tag.setId(null);
         entityManager.persist(tag);
-        return tag.getId();
+        return tag;
     }
 
     @Override
@@ -69,9 +69,7 @@ public class TagRepositoryImpl implements TagRepository {
     public Optional<Tag> findByName(String name) {
         Query query = entityManager.createQuery(SELECT_T_FROM_TAG_T_WHERE_T_NAME_NAME);
         query.setParameter(NAME, name);
-        return query.getResultList().size() == 0 ?
-                Optional.empty() :
-                Optional.ofNullable((Tag)query.getSingleResult());
+        return Optional.ofNullable((Tag)query.getSingleResult());
     }
 
     @Override
