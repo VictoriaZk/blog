@@ -10,12 +10,14 @@ import com.leverx.blog.repository.CommentRepository;
 import com.leverx.blog.repository.TagRepository;
 import com.leverx.blog.service.ArticleService;
 import com.leverx.blog.service.converter.ArticleDtoConverter;
+import com.leverx.blog.service.pages.PageImpl;
+import com.leverx.blog.service.sort.ArticleSortProvider;
 import com.leverx.blog.service.validation.ArticleValidator;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
+import java.sql.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -25,11 +27,12 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class ArticleServiceImpl implements ArticleService {
     private static final String THERE_IS_NO_ARTICLE_WITH_ID_S = "There is no article with id %s";
-    private ArticleDtoConverter articleDtoConverter;
-    private ArticleRepository articleRepository;
-    private ArticleValidator articleValidator;
-    private TagRepository tagRepository;
-    private CommentRepository commentRepository;
+    private static final String ACCESS_DENIED = "Access denied";
+    private final ArticleDtoConverter articleDtoConverter;
+    private final ArticleRepository articleRepository;
+    private final ArticleValidator articleValidator;
+    private final TagRepository tagRepository;
+    private final CommentRepository commentRepository;
 
 
     @Transactional
@@ -40,11 +43,12 @@ public class ArticleServiceImpl implements ArticleService {
         return articleDtoConverter.convert(article);
     }
 
-    //bad
     @Transactional
     @Override
     public ArticleDto create(ArticleDto articleDto) {
         articleValidator.validateUniqueArticleNameOnCreate(articleDto);
+        articleDto.setCreated_at(new Date(System.currentTimeMillis()));
+        articleDto.setUpdated_at(new Date(System.currentTimeMillis()));
         Article article = articleDtoConverter.unconvert(articleDto);
         Set<Tag> attachedTags = new HashSet<>();
         article
@@ -53,7 +57,7 @@ public class ArticleServiceImpl implements ArticleService {
                     tagRepository.findByName(tag.getName())
                             .map(attachedTags::add)
                             .orElseGet(() -> attachedTags.add(tagRepository.create(tag)));
-                    });
+                });
         article.setTagSet(attachedTags);
         Integer articleId = articleRepository.create(article);
         return findById(articleId);
@@ -61,17 +65,40 @@ public class ArticleServiceImpl implements ArticleService {
 
     @Transactional
     @Override
-    public ArticleDto update(ArticleDto articleDto) {
-        articleValidator.validateUniqueArticleNameOnUpdate(articleDto);
-        Article article = articleDtoConverter.unconvert(articleDto);
-        articleRepository.update(article);
-        return findById(article.getId());
+    public ArticleDto update(ArticleDto articleDto, String username) {
+        ArticleDto articleDTO = findById(articleDto.getId());
+        if (articleRepository
+                .findById(articleDto.getId())
+                .get()
+                .getUser()
+                .getEmail()
+                .equals(username)) {
+            articleValidator.validateUniqueArticleNameOnUpdate(articleDto);
+            articleDTO.setStatus(articleDto.getStatus());
+            articleDTO.setTitle(articleDto.getTitle());
+            articleDTO.setUpdated_at(new Date(System.currentTimeMillis()));
+            articleDTO.setText(articleDto.getText());
+            Article article = articleDtoConverter.unconvert(articleDTO);
+            Set<Tag> attachedTags = new HashSet<>();
+            article
+                    .getTagSet()
+                    .forEach(tag -> {
+                        tagRepository.findByName(tag.getName())
+                                .map(attachedTags::add)
+                                .orElseGet(() -> attachedTags.add(tagRepository.create(tag)));
+                    });
+            article.setTagSet(attachedTags);
+            articleRepository.update(article);
+            return findById(article.getId());
+        } else {
+            throw new ServiceException(ACCESS_DENIED);
+        }
     }
 
     @Transactional
     @Override
     public void remove(Integer id, String username) {
-        if(articleRepository
+        if (articleRepository
                 .findById(id)
                 .get()
                 .getUser()
@@ -140,9 +167,9 @@ public class ArticleServiceImpl implements ArticleService {
 
     @Transactional
     @Override
-    public List<ArticleDto> findAllSortByName() {
+    public List<ArticleDto> findAll(Integer skip, Integer limit, String sort, String order) {
         return articleRepository
-                .findAllSortByTitle()
+                .findAll(new PageImpl(skip, limit), new ArticleSortProvider(sort, order))
                 .stream()
                 .map(articleDtoConverter::convert)
                 .collect(Collectors.toList());

@@ -12,7 +12,7 @@ public interface ArticleService {
 
     ArticleDto create(ArticleDto articleDto);
 
-    ArticleDto update(ArticleDto articleDto);
+    ArticleDto update(ArticleDto articleDto, String username);
 
     void remove(Integer id, String username);
 
@@ -20,7 +20,7 @@ public interface ArticleService {
 
     List<ArticleDto> findAllPublicArticles();
 
-    List<ArticleDto> findAllSortByName();
+    List<ArticleDto> findAll(Integer skip, Integer limit, String sort, String order);
 
     List<ArticleDto> findByStatus(String status);
 
