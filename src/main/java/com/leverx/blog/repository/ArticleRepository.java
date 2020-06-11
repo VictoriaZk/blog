@@ -2,6 +2,8 @@ package com.leverx.blog.repository;
 
 import com.leverx.blog.model.Article;
 import com.leverx.blog.model.Tag;
+import com.leverx.blog.service.pages.Page;
+import com.leverx.blog.service.sort.ArticleSortProvider;
 
 import java.util.List;
 import java.util.Optional;
@@ -17,6 +19,8 @@ public interface ArticleRepository {
 
     List<Article> findAll();
 
+    List<Article> findAll(Page page, ArticleSortProvider articleSortProvider);
+
     List<Article> findAllPublicArticles();
 
     List<Article> findByStatus(String status);
@@ -24,6 +28,4 @@ public interface ArticleRepository {
     List<Article> findByName(String name);
 
     List<Article> findByTags(List<Tag> tags);
-
-    List<Article> findAllSortByTitle();
 }

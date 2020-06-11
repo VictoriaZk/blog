@@ -3,6 +3,8 @@ package com.leverx.blog.repository.impl;
 import com.leverx.blog.model.Article;
 import com.leverx.blog.model.Tag;
 import com.leverx.blog.repository.ArticleRepository;
+import com.leverx.blog.service.pages.Page;
+import com.leverx.blog.service.sort.ArticleSortProvider;
 import lombok.NoArgsConstructor;
 import org.springframework.stereotype.Repository;
 
@@ -12,7 +14,6 @@ import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Order;
 import javax.persistence.criteria.Root;
 import java.util.List;
 import java.util.Optional;
@@ -90,7 +91,7 @@ public class ArticleRepositoryImpl implements ArticleRepository {
     //bad
     @Override
     public List<Article> findByTags(List<Tag> tags) {
-        Query query =  entityManager.createNativeQuery("SELECT * FROM article_tag WHERE tag_id = ?");
+        Query query = entityManager.createNativeQuery("SELECT * FROM article_tag WHERE tag_id = ?");
         tags.stream().forEach(tag -> query.setParameter(1, tag.getId()));
         return query.getResultList();
     }
@@ -103,23 +104,18 @@ public class ArticleRepositoryImpl implements ArticleRepository {
         return query.getResultList();
     }
 
-    //bad
+
     @Override
-    public List<Article> findAllSortByTitle() {
+    public List<Article> findAll(Page page, ArticleSortProvider articleSortProvider) {
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         CriteriaQuery<Article> criteriaQuery = criteriaBuilder.createQuery(Article.class);
         Root<Article> root = criteriaQuery.from(Article.class);
-        criteriaQuery.orderBy(new Order[]{criteriaBuilder.asc(root.get(TITLE))});
-        /*new Predicate[]{criteriaBuilder.and(criteriaBuilder.equal(root.get("name"), certificateName))}
-        Predicate[] predicates = specification.toPredicate(root, criteriaQuery, criteriaBuilder);
-        criteriaQuery.where(predicates);*/
-        /*CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
-        CriteriaQuery<Article> criteriaQuery = criteriaBuilder.createQuery(Article.class);
-        Root<Article> root = criteriaQuery.from(Article.class);
-        criteriaQuery.orderBy(sortProvider.getSortOrder(root, criteriaBuilder));
-        Predicate[] predicates = specification.toPredicate(root, criteriaQuery, criteriaBuilder);
-        criteriaQuery.where(predicates);*/
+        criteriaQuery.orderBy(articleSortProvider.getSortOrder(root, criteriaBuilder));
+        Integer offset = page.getOffset();
+        Integer limit = page.getLimit();
         return entityManager.createQuery(criteriaQuery)
+                .setFirstResult(offset * limit - limit)
+                .setMaxResults(limit)
                 .getResultList();
     }
 }

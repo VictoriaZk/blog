@@ -14,16 +14,15 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
 public class TagServiceImpl implements TagService {
     private static final String THERE_IS_NO_TAG_WITH_ID_S = "There is no tag with id %s";
-    private TagRepository tagRepository;
-    private TagDtoConverter tagDtoConverter;
-    private TagValidator tagValidator;
+    private final TagRepository tagRepository;
+    private final TagDtoConverter tagDtoConverter;
+    private final TagValidator tagValidator;
 
 
     @Transactional

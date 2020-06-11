@@ -1,6 +1,5 @@
 package com.leverx.blog.controller;
 
-import com.leverx.blog.model.User;
 import com.leverx.blog.model.dto.ArticleDto;
 import com.leverx.blog.model.dto.CommentDto;
 import com.leverx.blog.service.ArticleService;
@@ -15,7 +14,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.sql.Date;
 import java.util.List;
 
 @RestController
@@ -33,9 +31,15 @@ public class ArticleController {
         return new ResponseEntity<>(articleDto, HttpStatus.OK);
     }
 
+    @PreAuthorize("hasAnyAuthority('USER', 'ADMIN')")
     @GetMapping(value = "/sort")
-    public ResponseEntity<List<ArticleDto>> getArticleBSortByName() {
-        List<ArticleDto> articles = articleService.findAllSortByName();
+    public ResponseEntity<List<ArticleDto>> getArticleBSortByName(
+            @RequestParam(name = "skip", required = false, defaultValue = "1") Integer skip,
+            @RequestParam(name = "limit", required = false, defaultValue = "10") Integer limit,
+            @RequestParam(name = "sort", required = false) String sort,
+            @RequestParam(name = "order", required = false) String order
+    ) {
+        List<ArticleDto> articles = articleService.findAll(skip, limit, sort, order);
         return new ResponseEntity<>(articles, HttpStatus.OK);
     }
 
@@ -67,12 +71,7 @@ public class ArticleController {
                                                     @RequestBody ArticleDto articleDto,
                                                     Authentication authentication) {
         String username = authentication.getName();
-        ArticleDto articleDTO = articleService.findById(id);
-        articleDTO.setStatus(articleDto.getStatus());
-        articleDTO.setTitle(articleDto.getTitle());
-        articleDTO.setText(articleDto.getText());
-        articleDTO.setUpdated_at(new Date(System.currentTimeMillis()));
-        articleDto = articleService.update(articleDTO);
+        articleDto = articleService.update(articleDto, username);
         return new ResponseEntity<>(articleDto, HttpStatus.OK);
     }
 

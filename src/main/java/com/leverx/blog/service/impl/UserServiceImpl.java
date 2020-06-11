@@ -10,7 +10,6 @@ import com.leverx.blog.repository.UserRepository;
 import com.leverx.blog.service.UserService;
 import com.leverx.blog.service.converter.ArticleDtoConverter;
 import com.leverx.blog.service.converter.UserDtoConverter;
-import com.leverx.blog.service.pages.PageImpl;
 import lombok.AllArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -25,9 +24,9 @@ public class UserServiceImpl implements UserService {
     private static final String USER_NOT_FOUND_ID = "User with such id not found";
     private static final String USER_WITH_SUCH_EMAIL_EXIST = "User with such email already exist";
     private static final String USER_NOT_FOUND_EMAIL = "User with such email not found";
-    private UserRepository userRepository;
-    private UserDtoConverter userDtoConverter;
-    private ArticleDtoConverter articleDtoConverter;
+    private final UserRepository userRepository;
+    private final UserDtoConverter userDtoConverter;
+    private final ArticleDtoConverter articleDtoConverter;
     private BCryptPasswordEncoder passwordEncoder;
 
     @Transactional

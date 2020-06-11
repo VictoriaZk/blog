@@ -1,7 +1,6 @@
 package com.leverx.blog.service;
 
 import com.leverx.blog.model.dto.CommentDto;
-import org.springframework.security.core.Authentication;
 
 import java.util.List;
 

@@ -5,11 +5,9 @@ import com.leverx.blog.model.Comment;
 import com.leverx.blog.model.dto.CommentDto;
 import com.leverx.blog.repository.ArticleRepository;
 import com.leverx.blog.repository.CommentRepository;
-import com.leverx.blog.repository.UserRepository;
 import com.leverx.blog.service.CommentService;
 import com.leverx.blog.service.converter.CommentDtoConverter;
 import lombok.AllArgsConstructor;
-import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -59,14 +57,13 @@ public class CommentServiceImpl implements CommentService {
         if (commentRepository
                 .findById(commentId).get().getUser().getEmail()
                 .equals(username)
-        ||
-        articleRepository
-                .findById(articleId).get().getUser().getEmail()
-                .equals(username))
-        {
-        commentRepository
-                .findById(commentId)
-                .ifPresent(article -> commentRepository.delete(commentId));
+                ||
+                articleRepository
+                        .findById(articleId).get().getUser().getEmail()
+                        .equals(username)) {
+            commentRepository
+                    .findById(commentId)
+                    .ifPresent(article -> commentRepository.delete(commentId));
         }
     }
 

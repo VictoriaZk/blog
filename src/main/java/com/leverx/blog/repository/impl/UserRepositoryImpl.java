@@ -45,7 +45,7 @@ public class UserRepositoryImpl implements UserRepository {
         Query query = entityManager.createQuery(SELECT_U_FROM_USER_U_WHERE_U_EMAIL_EMAIL);
         query.setParameter(EMAIL, email);
         return query.getResultList().size() != 0 ?
-                Optional.ofNullable((User)query.getSingleResult())
+                Optional.ofNullable((User) query.getSingleResult())
                 : Optional.empty();
     }
 
