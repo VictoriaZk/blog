@@ -57,15 +57,10 @@ public class UserRepositoryImpl implements UserRepository {
 
     @SuppressWarnings(value = "unchecked")
     @Override
-    public List<Article> findUserArticles(String email, Page page) {
+    public List<Article> findUserArticles(String email) {
         Query query = entityManager.createQuery(SELECT_A_FROM_ARTICLE_A_WHERE_A_USER_EMAIL_EMAIL);
         query.setParameter(EMAIL, email);
-        Integer offset = page.getOffset();
-        Integer limit = page.getLimit();
-        return query
-                .setFirstResult(offset * limit - limit)
-                .setMaxResults(limit)
-                .getResultList();
+        return query.getResultList();
     }
 
     @SuppressWarnings(value = "unchecked")

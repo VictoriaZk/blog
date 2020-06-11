@@ -14,7 +14,7 @@ public interface ArticleService {
 
     ArticleDto update(ArticleDto articleDto);
 
-    void remove(Integer id);
+    void remove(Integer id, String username);
 
     List<ArticleDto> findAll();
 

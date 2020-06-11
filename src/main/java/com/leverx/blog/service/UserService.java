@@ -4,6 +4,8 @@ import com.leverx.blog.model.dto.ArticleDto;
 import com.leverx.blog.model.dto.PageDto;
 import com.leverx.blog.model.dto.UserDto;
 
+import java.util.List;
+
 public interface UserService {
     UserDto create(UserDto userDto);
 
@@ -13,7 +15,7 @@ public interface UserService {
 
     UserDto findByEmail(String email);
 
-    PageDto<ArticleDto> findUserArticles(Integer id, Integer currentPage, Integer pageSize);
+    List<ArticleDto> findUserArticles(String email);
 
     PageDto<ArticleDto> findUserArticles(String email, Integer currentPage, Integer pageSize);
 }

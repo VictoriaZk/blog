@@ -26,6 +26,7 @@ public class ArticleController {
     private final CommentService commentService;
     private final UserService userService;
 
+    @PreAuthorize(value = "hasAuthority('ADMIN') or hasAuthority('USER')")
     @GetMapping(value = "/{id}")
     public ResponseEntity<ArticleDto> getArticle(@PathVariable("id") Integer id) {
         ArticleDto articleDto = articleService.findById(id);
@@ -44,13 +45,15 @@ public class ArticleController {
         return new ResponseEntity<>(articles, HttpStatus.OK);
     }
 
-    @PreAuthorize(value = "hasAuthority('ADMIN')")
+    @PreAuthorize(value = "hasAuthority('ADMIN') or hasAuthority('USER')")
     @GetMapping(value = "/my")
     public ResponseEntity<List<ArticleDto>> getAllArticles(Authentication authentication) {
-        List<ArticleDto> articles = articleService.findAll();
+        String username = authentication.getName();
+        List<ArticleDto> articles = userService.findUserArticles(username);
         return new ResponseEntity<>(articles, HttpStatus.OK);
     }
 
+    @PreAuthorize(value = "hasAuthority('ADMIN') or hasAuthority('USER')")
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ArticleDto> createArticle(@Valid @RequestBody ArticleDto articleDto) {
         articleDto.setId(null);
@@ -58,9 +61,12 @@ public class ArticleController {
         return new ResponseEntity<>(articleDto, HttpStatus.CREATED);
     }
 
+    @PreAuthorize(value = "hasAuthority('ADMIN') or hasAuthority('USER')")
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ArticleDto> updateArticle(@PathVariable("id") Integer id,
-                                                    @RequestBody ArticleDto articleDto) {
+                                                    @RequestBody ArticleDto articleDto,
+                                                    Authentication authentication) {
+        String username = authentication.getName();
         ArticleDto articleDTO = articleService.findById(id);
         articleDTO.setStatus(articleDto.getStatus());
         articleDTO.setTitle(articleDto.getTitle());
@@ -70,9 +76,11 @@ public class ArticleController {
         return new ResponseEntity<>(articleDto, HttpStatus.OK);
     }
 
+    @PreAuthorize(value = "hasAuthority('ADMIN') or hasAuthority('USER')")
     @DeleteMapping(value = "/{id}")
-    public ResponseEntity deleteArticle(@PathVariable("id") Integer id) {
-        articleService.remove(id);
+    public ResponseEntity deleteArticle(@PathVariable("id") Integer id, Authentication authentication) {
+        String username = authentication.getName();
+        articleService.remove(id, username);
         return new ResponseEntity(HttpStatus.NO_CONTENT);
     }
 
@@ -89,8 +97,9 @@ public class ArticleController {
         return new ResponseEntity<>(commentDto, HttpStatus.OK);
     }
 
+    @PreAuthorize(value = "hasAuthority('ADMIN') or hasAuthority('USER')")
     @PostMapping(value = "/{id}/comments", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<CommentDto> createArticle(@PathVariable("id") Integer articleId,
+    public ResponseEntity<CommentDto> createComment(@PathVariable("id") Integer articleId,
                                                     @Valid @RequestBody CommentDto commentDto) {
         commentDto.setId(null);
         commentDto = commentService.create(articleId, commentDto);

@@ -16,7 +16,7 @@ public interface UserRepository {
 
     void delete(Integer id);
 
-    List<Article> findUserArticles(String email, Page page);
+    List<Article> findUserArticles(String email);
 
     List<Article> findUserArticles(Integer id, Page page);
 

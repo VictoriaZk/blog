@@ -35,12 +35,5 @@ public class UserController {
         userService.remove(id);
         return new ResponseEntity(HttpStatus.NO_CONTENT);
     }
-
-    @GetMapping(value = "/articles", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public PageDto<ArticleDto> findUserArticles(Authentication authentication,
-                                                @RequestParam(value = "page", required = false, defaultValue = "1") Integer page,
-                                                @RequestParam(value = "limit", required = false, defaultValue = "3") Integer limit) {
-        String userName = authentication.getName();
-        return userService.findUserArticles(userName, page, limit);
-    }
+    
 }

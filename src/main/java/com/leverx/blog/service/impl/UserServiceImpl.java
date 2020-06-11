@@ -92,18 +92,12 @@ public class UserServiceImpl implements UserService {
 
     @Transactional
     @Override
-    public PageDto<ArticleDto> findUserArticles(Integer id, Integer page, Integer limit) {
-        return userRepository.findById(id)
-                .map(user -> {
-                    List<ArticleDto> articlesDto = userRepository.findUserArticles(id,
-                            new PageImpl(page, limit))
-                            .stream()
-                            .map(articleDtoConverter::convert)
-                            .collect(Collectors.toList());
-                    Long countOfElements = userRepository.amountOfUserArticles(id);
-                    Long allPages = countOfElements % limit == 0 ? countOfElements / limit : countOfElements / limit + 1;
-                    return new PageDto<>(articlesDto, page, allPages, limit);
-                })
-                .orElseThrow(() -> new ObjectNotFoundException(USER_NOT_FOUND_ID + id));
+    public List<ArticleDto> findUserArticles(String username) {
+        return userRepository
+                .findUserArticles(username)
+                .stream()
+                .map(articleDtoConverter::convert)
+                .collect(Collectors.toList());
+
     }
 }

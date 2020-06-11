@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -34,13 +35,15 @@ public class TagController {
         return new ResponseEntity<>(tags, HttpStatus.OK);
     }
 
+    @PreAuthorize(value = "hasAuthority('ADMIN') or hasAuthority('USER')")
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<TagDto> createArticle(@Valid @RequestBody TagDto tagDto) {
+    public ResponseEntity<TagDto> createTag(@Valid @RequestBody TagDto tagDto) {
         tagDto.setId(null);
         tagDto = tagService.create(tagDto);
         return new ResponseEntity<>(tagDto, HttpStatus.CREATED);
     }
 
+    @PreAuthorize(value = "hasAuthority('ADMIN') or hasAuthority('USER')")
     @DeleteMapping(value = "/{id}")
     public ResponseEntity deleteTag(@PathVariable("id") Integer id) {
         tagService.remove(id);

@@ -68,13 +68,20 @@ public class ArticleServiceImpl implements ArticleService {
 
     @Transactional
     @Override
-    public void remove(Integer id) {
-        commentRepository
-                .findAll(id)
-                .forEach(comment -> commentRepository.delete(comment.getId()));
-        articleRepository
+    public void remove(Integer id, String username) {
+        if(articleRepository
                 .findById(id)
-                .ifPresent(article -> articleRepository.delete(id));
+                .get()
+                .getUser()
+                .getEmail()
+                .equals(username)) {
+            commentRepository
+                    .findAll(id)
+                    .forEach(comment -> commentRepository.delete(comment.getId()));
+            articleRepository
+                    .findById(id)
+                    .ifPresent(article -> articleRepository.delete(id));
+        }
     }
 
     @Transactional

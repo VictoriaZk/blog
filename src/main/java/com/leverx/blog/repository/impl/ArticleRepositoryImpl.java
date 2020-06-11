@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.Optional;
 
 
+@SuppressWarnings("ALL")
 @Repository
 @NoArgsConstructor
 public class ArticleRepositoryImpl implements ArticleRepository {
