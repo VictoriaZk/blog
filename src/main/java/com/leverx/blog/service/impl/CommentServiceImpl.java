@@ -5,6 +5,7 @@ import com.leverx.blog.model.Comment;
 import com.leverx.blog.model.dto.CommentDto;
 import com.leverx.blog.repository.ArticleRepository;
 import com.leverx.blog.repository.CommentRepository;
+import com.leverx.blog.repository.UserRepository;
 import com.leverx.blog.service.CommentService;
 import com.leverx.blog.service.converter.CommentDtoConverter;
 import lombok.AllArgsConstructor;
@@ -18,10 +19,10 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class CommentServiceImpl implements CommentService {
     private static final String THERE_IS_NO_COMMENT_WITH_ID_S = "There is no comment with id %s ";
-    private static final String CAN_NOT_CREATE_COMMENT = "Can not create comment!";
     private final CommentRepository commentRepository;
     private final CommentDtoConverter commentDtoConverter;
     private final ArticleRepository articleRepository;
+    private final UserRepository userRepository;
 
     @Transactional
     @Override
@@ -39,18 +40,18 @@ public class CommentServiceImpl implements CommentService {
         return commentDtoConverter.convert(comment);
     }
 
+    @SuppressWarnings("OptionalGetWithoutIsPresent")
     @Transactional
     @Override
-    public CommentDto create(Integer articleId, CommentDto commentDto) {
+    public CommentDto create(Integer articleId, CommentDto commentDto, String username) {
         Comment comment = commentDtoConverter.unconvert(commentDto);
-        if (comment.getArticle().getId().equals(articleId)) {
-            Integer commentId = commentRepository.create(comment);
-            return findById(commentId);
-        } else {
-            throw new ServiceException(CAN_NOT_CREATE_COMMENT);
-        }
+        comment.setUser(userRepository.findByEmail(username).get());
+        comment.setArticle(articleRepository.findById(articleId).get());
+        Integer commentId = commentRepository.create(comment);
+        return findById(commentId);
     }
 
+    @SuppressWarnings("OptionalGetWithoutIsPresent")
     @Transactional
     @Override
     public void remove(Integer commentId, Integer articleId, String username) {

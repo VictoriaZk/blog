@@ -24,6 +24,12 @@ public class ArticleController {
     private final CommentService commentService;
     private final UserService userService;
 
+    @GetMapping
+    public ResponseEntity<List<ArticleDto>> getArticles() {
+        List<ArticleDto> articles = articleService.findAllPublicArticles();
+        return new ResponseEntity<>(articles, HttpStatus.OK);
+    }
+
     @PreAuthorize(value = "hasAuthority('ADMIN') or hasAuthority('USER')")
     @GetMapping(value = "/{id}")
     public ResponseEntity<ArticleDto> getArticle(@PathVariable("id") Integer id) {
@@ -40,12 +46,6 @@ public class ArticleController {
             @RequestParam(name = "order", required = false) String order
     ) {
         List<ArticleDto> articles = articleService.findAll(skip, limit, sort, order);
-        return new ResponseEntity<>(articles, HttpStatus.OK);
-    }
-
-    @GetMapping
-    public ResponseEntity<List<ArticleDto>> getArticles() {
-        List<ArticleDto> articles = articleService.findAllPublicArticles();
         return new ResponseEntity<>(articles, HttpStatus.OK);
     }
 
@@ -83,12 +83,14 @@ public class ArticleController {
         return new ResponseEntity(HttpStatus.NO_CONTENT);
     }
 
+    @PreAuthorize(value = "hasAuthority('ADMIN') or hasAuthority('USER')")
     @GetMapping(value = "/{id}/comments")
     public ResponseEntity<List<CommentDto>> getComments(@PathVariable("id") Integer id) {
         List<CommentDto> commentsDto = commentService.findAll(id);
         return new ResponseEntity<>(commentsDto, HttpStatus.OK);
     }
 
+    @PreAuthorize(value = "hasAuthority('ADMIN') or hasAuthority('USER')")
     @GetMapping(value = "/{id1}/comments/{id2}")
     public ResponseEntity<CommentDto> getComment(@PathVariable("id1") Integer articleId,
                                                  @PathVariable("id2") Integer commentId) {
@@ -99,9 +101,11 @@ public class ArticleController {
     @PreAuthorize(value = "hasAuthority('ADMIN') or hasAuthority('USER')")
     @PostMapping(value = "/{id}/comments", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<CommentDto> createComment(@PathVariable("id") Integer articleId,
-                                                    @Valid @RequestBody CommentDto commentDto) {
+                                                    @Valid @RequestBody CommentDto commentDto,
+                                                    Authentication authentication) {
+        String username = authentication.getName();
         commentDto.setId(null);
-        commentDto = commentService.create(articleId, commentDto);
+        commentDto = commentService.create(articleId, commentDto, username);
         return new ResponseEntity<>(commentDto, HttpStatus.CREATED);
     }
 

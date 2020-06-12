@@ -9,7 +9,7 @@ public interface CommentService {
 
     CommentDto findById(Integer articleId, Integer commentId);
 
-    CommentDto create(Integer id, CommentDto commentDto);
+    CommentDto create(Integer id, CommentDto commentDto, String username);
 
     void remove(Integer commentId, Integer articleId, String username);
 
