@@ -25,7 +25,7 @@ public class ArticleController {
     private final UserService userService;
 
     @GetMapping
-    public ResponseEntity<List<ArticleDto>> getArticles() {
+    public ResponseEntity<List<ArticleDto>> getPublicArticles() {
         List<ArticleDto> articles = articleService.findAllPublicArticles();
         return new ResponseEntity<>(articles, HttpStatus.OK);
     }
@@ -37,9 +37,9 @@ public class ArticleController {
         return new ResponseEntity<>(articleDto, HttpStatus.OK);
     }
 
-    @PreAuthorize("hasAnyAuthority('USER', 'ADMIN')")
+    @PreAuthorize(value = "hasAuthority('ADMIN') or hasAuthority('USER')")
     @GetMapping(value = "/sort")
-    public ResponseEntity<List<ArticleDto>> getArticleBSortByName(
+    public ResponseEntity<List<ArticleDto>> getSortArticles(
             @RequestParam(name = "skip", required = false, defaultValue = "1") Integer skip,
             @RequestParam(name = "limit", required = false, defaultValue = "10") Integer limit,
             @RequestParam(name = "sort", required = false) String sort,
@@ -49,9 +49,18 @@ public class ArticleController {
         return new ResponseEntity<>(articles, HttpStatus.OK);
     }
 
+    /*@PreAuthorize(value = "hasAuthority('ADMIN') or hasAuthority('USER')")
+    @GetMapping(value = "/tags")
+    public ResponseEntity<List<ArticleDto>> getSortArticles(
+            @RequestParam(name = "tags", required = false) List<String> tags
+    ) {
+        /*List<ArticleDto> articles = articleService.findAll(skip, limit, sort, order);
+        return new ResponseEntity<>(tags, HttpStatus.OK);
+    }*/
+
     @PreAuthorize(value = "hasAuthority('ADMIN') or hasAuthority('USER')")
     @GetMapping(value = "/my")
-    public ResponseEntity<List<ArticleDto>> getAllArticles(Authentication authentication) {
+    public ResponseEntity<List<ArticleDto>> getUserArticles(Authentication authentication) {
         String username = authentication.getName();
         List<ArticleDto> articles = userService.findUserArticles(username);
         return new ResponseEntity<>(articles, HttpStatus.OK);
@@ -87,6 +96,19 @@ public class ArticleController {
     @GetMapping(value = "/{id}/comments")
     public ResponseEntity<List<CommentDto>> getComments(@PathVariable("id") Integer id) {
         List<CommentDto> commentsDto = commentService.findAll(id);
+        return new ResponseEntity<>(commentsDto, HttpStatus.OK);
+    }
+
+    @PreAuthorize(value = "hasAuthority('ADMIN') or hasAuthority('USER')")
+    @GetMapping(value = "/{id}/comments/sort")
+    public ResponseEntity<List<CommentDto>> getCommentsSortByDate(
+            @PathVariable("id") Integer id,
+            @RequestParam(name = "skip", required = false, defaultValue = "1") Integer skip,
+            @RequestParam(name = "limit", required = false, defaultValue = "10") Integer limit,
+            @RequestParam(name = "sort", required = false) String sort,
+            @RequestParam(name = "order", required = false) String order
+    ) {
+        List<CommentDto> commentsDto = commentService.findAll(id, skip, limit, sort, order);
         return new ResponseEntity<>(commentsDto, HttpStatus.OK);
     }
 

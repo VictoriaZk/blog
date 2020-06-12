@@ -8,6 +8,9 @@ import com.leverx.blog.repository.CommentRepository;
 import com.leverx.blog.repository.UserRepository;
 import com.leverx.blog.service.CommentService;
 import com.leverx.blog.service.converter.CommentDtoConverter;
+import com.leverx.blog.service.pages.PageImpl;
+import com.leverx.blog.service.sort.ArticleSortProvider;
+import com.leverx.blog.service.sort.CommentSortProvider;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -73,6 +76,16 @@ public class CommentServiceImpl implements CommentService {
     public List<CommentDto> findAll(Integer articleId) {
         List<Comment> comments = commentRepository.findAll(articleId);
         return comments.stream()
+                .map(commentDtoConverter::convert)
+                .collect(Collectors.toList());
+    }
+
+    @Transactional
+    @Override
+    public List<CommentDto> findAll(Integer id, Integer skip, Integer limit, String sort, String order) {
+        return commentRepository
+                .findAll(id, new PageImpl(skip, limit), new CommentSortProvider(sort, order))
+                .stream()
                 .map(commentDtoConverter::convert)
                 .collect(Collectors.toList());
     }

@@ -15,4 +15,6 @@ public interface CommentService {
 
     List<CommentDto> findAll(Integer id);
 
+    List<CommentDto> findAll(Integer id, Integer skip, Integer limit, String sort, String order);
+
 }

@@ -1,13 +1,21 @@
 package com.leverx.blog.repository.impl;
 
+import com.leverx.blog.model.Article;
 import com.leverx.blog.model.Comment;
 import com.leverx.blog.repository.CommentRepository;
+import com.leverx.blog.service.pages.Page;
+import com.leverx.blog.service.sort.ArticleSortProvider;
+import com.leverx.blog.service.sort.CommentSortProvider;
 import lombok.NoArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 import java.util.List;
 import java.util.Optional;
 
@@ -21,6 +29,7 @@ public class CommentRepositoryImpl implements CommentRepository {
     private static final String ARTICLE_ID = "articleId";
     private static final String COMMENT_ID = "commentId";
     private static final String PUBLIC = "public";
+    private static final String ARTICLE = "article";
 
     @PersistenceContext
     EntityManager entityManager;
@@ -61,5 +70,20 @@ public class CommentRepositoryImpl implements CommentRepository {
         query.setParameter(ARTICLE_ID, id);
         query.setParameter(PUBLIC, PUBLIC);
         return query.getResultList();
+    }
+
+    @Override
+    public List<Comment> findAll(Integer id, Page page, CommentSortProvider commentSortProvider) {
+        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Comment> criteriaQuery = criteriaBuilder.createQuery(Comment.class);
+        Root<Comment> root = criteriaQuery.from(Comment.class);
+        criteriaQuery.where(new Predicate[]{criteriaBuilder.and(criteriaBuilder.equal(root.get(ARTICLE), id))});
+        criteriaQuery.orderBy(commentSortProvider.getSortOrder(root, criteriaBuilder));
+        Integer offset = page.getOffset();
+        Integer limit = page.getLimit();
+        return entityManager.createQuery(criteriaQuery)
+                .setFirstResult(offset * limit - limit)
+                .setMaxResults(limit)
+                .getResultList();
     }
 }
