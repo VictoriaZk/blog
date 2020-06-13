@@ -2,7 +2,6 @@ package com.leverx.blog.service;
 
 
 import com.leverx.blog.model.dto.ArticleDto;
-import com.leverx.blog.model.dto.TagDto;
 
 import java.util.List;
 
@@ -10,7 +9,7 @@ import java.util.List;
 public interface ArticleService {
     ArticleDto findById(Integer id);
 
-    ArticleDto create(ArticleDto articleDto);
+    ArticleDto create(ArticleDto articleDto, String username);
 
     ArticleDto update(ArticleDto articleDto, String username);
 
@@ -26,6 +25,6 @@ public interface ArticleService {
 
     List<ArticleDto> findByName(String name);
 
-    List<ArticleDto> findArticlesByTags(List<TagDto> tags);
+    List<ArticleDto> findArticlesByTags(List<String> tags);
 
 }

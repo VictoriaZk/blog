@@ -43,20 +43,18 @@ public class ArticleController {
             @RequestParam(name = "skip", required = false, defaultValue = "1") Integer skip,
             @RequestParam(name = "limit", required = false, defaultValue = "10") Integer limit,
             @RequestParam(name = "sort", required = false) String sort,
-            @RequestParam(name = "order", required = false) String order
-    ) {
+            @RequestParam(name = "order", required = false) String order) {
         List<ArticleDto> articles = articleService.findAll(skip, limit, sort, order);
         return new ResponseEntity<>(articles, HttpStatus.OK);
     }
 
-    /*@PreAuthorize(value = "hasAuthority('ADMIN') or hasAuthority('USER')")
+    @PreAuthorize(value = "hasAuthority('ADMIN') or hasAuthority('USER')")
     @GetMapping(value = "/tags")
-    public ResponseEntity<List<ArticleDto>> getSortArticles(
-            @RequestParam(name = "tags", required = false) List<String> tags
-    ) {
-        /*List<ArticleDto> articles = articleService.findAll(skip, limit, sort, order);
-        return new ResponseEntity<>(tags, HttpStatus.OK);
-    }*/
+    public ResponseEntity<List<ArticleDto>> getArticlesByTags(
+            @RequestParam(name = "tags", required = false) List<String> tags) {
+        List<ArticleDto> articles = articleService.findArticlesByTags(tags);
+        return new ResponseEntity<>(articles, HttpStatus.OK);
+    }
 
     @PreAuthorize(value = "hasAuthority('ADMIN') or hasAuthority('USER')")
     @GetMapping(value = "/my")
@@ -68,9 +66,11 @@ public class ArticleController {
 
     @PreAuthorize(value = "hasAuthority('ADMIN') or hasAuthority('USER')")
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ArticleDto> createArticle(@Valid @RequestBody ArticleDto articleDto) {
+    public ResponseEntity<ArticleDto> createArticle(@Valid @RequestBody ArticleDto articleDto,
+                                                    Authentication authentication) {
+        String username = authentication.getName();
         articleDto.setId(null);
-        articleDto = articleService.create(articleDto);
+        articleDto = articleService.create(articleDto, username);
         return new ResponseEntity<>(articleDto, HttpStatus.CREATED);
     }
 
@@ -80,13 +80,15 @@ public class ArticleController {
                                                     @RequestBody ArticleDto articleDto,
                                                     Authentication authentication) {
         String username = authentication.getName();
+        articleDto.setId(id);
         articleDto = articleService.update(articleDto, username);
         return new ResponseEntity<>(articleDto, HttpStatus.OK);
     }
 
     @PreAuthorize(value = "hasAuthority('ADMIN') or hasAuthority('USER')")
     @DeleteMapping(value = "/{id}")
-    public ResponseEntity deleteArticle(@PathVariable("id") Integer id, Authentication authentication) {
+    public ResponseEntity deleteArticle(@PathVariable("id") Integer id,
+                                        Authentication authentication) {
         String username = authentication.getName();
         articleService.remove(id, username);
         return new ResponseEntity(HttpStatus.NO_CONTENT);

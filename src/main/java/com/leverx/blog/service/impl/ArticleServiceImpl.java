@@ -4,10 +4,10 @@ import com.leverx.blog.exception.ServiceException;
 import com.leverx.blog.model.Article;
 import com.leverx.blog.model.Tag;
 import com.leverx.blog.model.dto.ArticleDto;
-import com.leverx.blog.model.dto.TagDto;
 import com.leverx.blog.repository.ArticleRepository;
 import com.leverx.blog.repository.CommentRepository;
 import com.leverx.blog.repository.TagRepository;
+import com.leverx.blog.repository.UserRepository;
 import com.leverx.blog.service.ArticleService;
 import com.leverx.blog.service.converter.ArticleDtoConverter;
 import com.leverx.blog.service.pages.PageImpl;
@@ -18,9 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -33,6 +31,7 @@ public class ArticleServiceImpl implements ArticleService {
     private final ArticleValidator articleValidator;
     private final TagRepository tagRepository;
     private final CommentRepository commentRepository;
+    private final UserRepository userRepository;
 
 
     @Transactional
@@ -45,10 +44,12 @@ public class ArticleServiceImpl implements ArticleService {
 
     @Transactional
     @Override
-    public ArticleDto create(ArticleDto articleDto) {
+    public ArticleDto create(ArticleDto articleDto, String username) {
         articleValidator.validateUniqueArticleNameOnCreate(articleDto);
         articleDto.setCreated_at(new Date(System.currentTimeMillis()));
         articleDto.setUpdated_at(new Date(System.currentTimeMillis()));
+        userRepository.findByEmail(username)
+                .ifPresent(user -> articleDto.setAuthor_id(user.getId()));
         Article article = articleDtoConverter.unconvert(articleDto);
         Set<Tag> attachedTags = new HashSet<>();
         article
@@ -66,18 +67,24 @@ public class ArticleServiceImpl implements ArticleService {
     @Transactional
     @Override
     public ArticleDto update(ArticleDto articleDto, String username) {
-        ArticleDto articleDTO = findById(articleDto.getId());
-        if (articleRepository
-                .findById(articleDto.getId())
-                .get()
-                .getUser()
-                .getEmail()
-                .equals(username)) {
+        Integer id = articleDto.getId();
+        ArticleDto articleDTO = findById(id);
+        String articleAuthor = articleRepository.findById(id)
+                .isPresent()
+                ?
+                articleRepository.findById(id)
+                        .get()
+                        .getUser()
+                        .getEmail()
+                :
+                THERE_IS_NO_ARTICLE_WITH_ID_S + id;
+        if (articleAuthor.equals(username)) {
             articleValidator.validateUniqueArticleNameOnUpdate(articleDto);
             articleDTO.setStatus(articleDto.getStatus());
             articleDTO.setTitle(articleDto.getTitle());
             articleDTO.setUpdated_at(new Date(System.currentTimeMillis()));
             articleDTO.setText(articleDto.getText());
+            articleDTO.setTags(articleDto.getTags());
             Article article = articleDtoConverter.unconvert(articleDTO);
             Set<Tag> attachedTags = new HashSet<>();
             article
@@ -98,12 +105,16 @@ public class ArticleServiceImpl implements ArticleService {
     @Transactional
     @Override
     public void remove(Integer id, String username) {
-        if (articleRepository
-                .findById(id)
-                .get()
-                .getUser()
-                .getEmail()
-                .equals(username)) {
+        String articleAuthor = articleRepository.findById(id)
+                .isPresent()
+                ?
+                articleRepository.findById(id)
+                        .get()
+                        .getUser()
+                        .getEmail()
+                :
+                THERE_IS_NO_ARTICLE_WITH_ID_S + id;
+        if (articleAuthor.equals(username)) {
             commentRepository
                     .findAll(id)
                     .forEach(comment -> commentRepository.delete(comment.getId()));
@@ -136,23 +147,32 @@ public class ArticleServiceImpl implements ArticleService {
     @Transactional
     @Override
     public List<ArticleDto> findByName(String name) {
-        return articleRepository.
-                findByName(name)
+        return articleRepository
+                .findByName(name)
                 .stream()
                 .map(articleDtoConverter::convert)
                 .collect(Collectors.toList());
     }
 
-    //bad
+
+    @SuppressWarnings("OptionalGetWithoutIsPresent")
     @Transactional
     @Override
-    public List<ArticleDto> findArticlesByTags(List<TagDto> tags) {
-        /*return articleRepository
-                .findByTags(tags)
+    public List<ArticleDto> findArticlesByTags(List<String> tags) {
+        List<Optional<Tag>> tagsDto = tags.stream()
+                .map(tagRepository::findByName)
+                .collect(Collectors.toList());
+        List<Integer> articles = new ArrayList<>();
+        tagsDto
                 .stream()
-                .map(articleDtoConverter::convert)
-                .collect(Collectors.toList());*/
-        return null;
+                .map(tag -> articleRepository.findByTags(tag.get().getId()))
+                .forEach(articles::addAll);
+        return articles.stream()
+                .map(articleRepository::findById)
+                .collect(Collectors.toList())
+                .stream()
+                .map(article -> articleDtoConverter.convert(article.get()))
+                .collect(Collectors.toList());
     }
 
     @Transactional
