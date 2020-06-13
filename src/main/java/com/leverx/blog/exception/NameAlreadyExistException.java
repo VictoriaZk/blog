@@ -1,5 +1,6 @@
 package com.leverx.blog.exception;
 
+
 public class NameAlreadyExistException extends RuntimeException {
     public NameAlreadyExistException() {
         super();

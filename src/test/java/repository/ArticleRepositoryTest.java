@@ -11,13 +11,12 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.transaction.Transactional;
-
-import java.util.*;
+import java.util.Optional;
 
 @RunWith(SpringRunner.class)
 @ContextConfiguration(classes = TestConfig.class)
 @Transactional
-public class ArticleRepositoryTest{
+public class ArticleRepositoryTest {
 
     @Autowired
     private ArticleRepository articleRepository;

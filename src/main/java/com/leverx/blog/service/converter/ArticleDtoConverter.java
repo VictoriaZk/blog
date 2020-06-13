@@ -48,12 +48,12 @@ public class ArticleDtoConverter implements DtoConverter<Article, ArticleDto> {
                     .ifPresent(article::setUser);
             article.setCreated_at(articleDto.getCreated_at());
             article.setUpdated_at(articleDto.getUpdated_at());
-        }
-        if (!articleDto.getTags().isEmpty()) {
-            article.setTagSet(articleDto.getTags()
-                    .stream()
-                    .map(tagDtoConverter::unconvert)
-                    .collect(Collectors.toSet()));
+            if (!articleDto.getTags().isEmpty()) {
+                article.setTagSet(articleDto.getTags()
+                        .stream()
+                        .map(tagDtoConverter::unconvert)
+                        .collect(Collectors.toSet()));
+            }
         }
         return article;
     }

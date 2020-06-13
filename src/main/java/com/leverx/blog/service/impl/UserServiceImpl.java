@@ -2,11 +2,13 @@ package com.leverx.blog.service.impl;
 
 import com.leverx.blog.exception.NameAlreadyExistException;
 import com.leverx.blog.exception.ObjectNotFoundException;
+import com.leverx.blog.model.Article;
 import com.leverx.blog.model.User;
 import com.leverx.blog.model.dto.ArticleDto;
-import com.leverx.blog.model.dto.PageDto;
 import com.leverx.blog.model.dto.UserDto;
+import com.leverx.blog.repository.CommentRepository;
 import com.leverx.blog.repository.UserRepository;
+import com.leverx.blog.service.ArticleService;
 import com.leverx.blog.service.UserService;
 import com.leverx.blog.service.converter.ArticleDtoConverter;
 import com.leverx.blog.service.converter.UserDtoConverter;
@@ -26,7 +28,9 @@ public class UserServiceImpl implements UserService {
     private static final String USER_NOT_FOUND_EMAIL = "User with such email not found";
     private final UserRepository userRepository;
     private final UserDtoConverter userDtoConverter;
+    private final ArticleService articleService;
     private final ArticleDtoConverter articleDtoConverter;
+    private final CommentRepository commentRepository;
     private BCryptPasswordEncoder passwordEncoder;
 
     @Transactional
@@ -56,6 +60,12 @@ public class UserServiceImpl implements UserService {
     @Transactional
     @Override
     public void remove(Integer id) {
+        String email = userRepository.findById(id).isPresent() ?
+                userRepository.findById(id).get().getEmail() :
+                USER_NOT_FOUND_ID + id;
+        List<Article> articles = userRepository.findUserArticles(email);
+        articles.forEach(article -> articleService.remove(article.getId(), email));
+        commentRepository.deleteByUser(id);
         userRepository.delete(id);
     }
 
@@ -66,27 +76,6 @@ public class UserServiceImpl implements UserService {
                 .findByEmail(email)
                 .map(userDtoConverter::convert)
                 .orElseThrow(() -> new ObjectNotFoundException(USER_NOT_FOUND_EMAIL + email));
-    }
-
-    @Transactional
-    @Override
-    public PageDto<ArticleDto> findUserArticles(String email, Integer page, Integer limit) {
-        /*return userRepository.findForSingleResult(new UserByEmail(email))
-                .map(user -> {
-                    List<ArticleDto> articlesDto = userRepository.findUserArticles(email,
-                            new PageImpl(page,limit))
-                            .stream()
-                            .map(articleDtoConverter::convert)
-                            .collect(Collectors.toList());
-                    Long countOfElements = userRepository.amountOfUserArticles(email);
-                    //bad
-                    Long allPages = countOfElements % limit == 0 ? countOfElements / limit : countOfElements / limit + 1;
-                    return new PageDto<>(articlesDto, page, allPages,limit);
-                })
-                .orElseThrow(() -> new ObjectNotFoundException(USER_NOT_FOUND_EMAIL + email));
-
-         */
-        return null;
     }
 
     @Transactional

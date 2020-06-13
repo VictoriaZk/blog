@@ -1,9 +1,7 @@
 package com.leverx.blog.repository;
 
-import com.leverx.blog.model.Article;
 import com.leverx.blog.model.Comment;
 import com.leverx.blog.service.pages.Page;
-import com.leverx.blog.service.sort.ArticleSortProvider;
 import com.leverx.blog.service.sort.CommentSortProvider;
 
 import java.util.List;
@@ -17,6 +15,8 @@ public interface CommentRepository {
     Integer create(Comment comment);
 
     void delete(Integer id);
+
+    void deleteByUser(Integer id);
 
     List<Comment> findAll(Integer id);
 

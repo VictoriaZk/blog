@@ -9,12 +9,12 @@ import com.leverx.blog.repository.UserRepository;
 import com.leverx.blog.service.CommentService;
 import com.leverx.blog.service.converter.CommentDtoConverter;
 import com.leverx.blog.service.pages.PageImpl;
-import com.leverx.blog.service.sort.ArticleSortProvider;
 import com.leverx.blog.service.sort.CommentSortProvider;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.sql.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -22,6 +22,7 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class CommentServiceImpl implements CommentService {
     private static final String THERE_IS_NO_COMMENT_WITH_ID_S = "There is no comment with id %s ";
+    private static final String THERE_IS_NO_ARTICLE_WITH_S = "There is no article with %s";
     private final CommentRepository commentRepository;
     private final CommentDtoConverter commentDtoConverter;
     private final ArticleRepository articleRepository;
@@ -43,28 +44,43 @@ public class CommentServiceImpl implements CommentService {
         return commentDtoConverter.convert(comment);
     }
 
-    @SuppressWarnings("OptionalGetWithoutIsPresent")
+
     @Transactional
     @Override
     public CommentDto create(Integer articleId, CommentDto commentDto, String username) {
         Comment comment = commentDtoConverter.unconvert(commentDto);
-        comment.setUser(userRepository.findByEmail(username).get());
-        comment.setArticle(articleRepository.findById(articleId).get());
+        userRepository.findByEmail(username)
+                .ifPresent(comment::setUser);
+        articleRepository.findById(articleId)
+                .ifPresent(comment::setArticle);
+        comment.setCreated_at(new Date(System.currentTimeMillis()));
         Integer commentId = commentRepository.create(comment);
         return findById(commentId);
     }
 
-    @SuppressWarnings("OptionalGetWithoutIsPresent")
+
     @Transactional
     @Override
     public void remove(Integer commentId, Integer articleId, String username) {
-        if (commentRepository
-                .findById(commentId).get().getUser().getEmail()
-                .equals(username)
-                ||
-                articleRepository
-                        .findById(articleId).get().getUser().getEmail()
-                        .equals(username)) {
+        String commentAuthor = commentRepository.findById(commentId)
+                .isPresent()
+                ?
+                commentRepository.findById(commentId)
+                        .get()
+                        .getUser()
+                        .getEmail()
+                :
+                THERE_IS_NO_COMMENT_WITH_ID_S + commentId;
+        String articleAuthor = articleRepository.findById(articleId)
+                .isPresent()
+                ?
+                articleRepository.findById(articleId)
+                        .get()
+                        .getUser()
+                        .getEmail()
+                :
+                THERE_IS_NO_ARTICLE_WITH_S + articleId;
+        if (commentAuthor.equals(username) || articleAuthor.equals(username)) {
             commentRepository
                     .findById(commentId)
                     .ifPresent(article -> commentRepository.delete(commentId));

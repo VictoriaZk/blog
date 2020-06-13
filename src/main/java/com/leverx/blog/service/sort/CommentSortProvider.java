@@ -1,6 +1,5 @@
 package com.leverx.blog.service.sort;
 
-import com.leverx.blog.model.Article;
 import com.leverx.blog.model.Comment;
 import org.springframework.util.StringUtils;
 

@@ -20,8 +20,9 @@ public class UserController {
 
 
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<UserDto> createUser(@Valid @RequestBody UserDto userDto) {
-        userDto.setRole(Role.ROLE_USER.toString());
+    public ResponseEntity<UserDto> registerUser(@Valid @RequestBody UserDto userDto) {
+        userDto.setRole(Role.USER.toString());
+        userDto.setId(null);
         UserDto newUser = userService.create(userDto);
         return new ResponseEntity<>(newUser, HttpStatus.CREATED);
     }

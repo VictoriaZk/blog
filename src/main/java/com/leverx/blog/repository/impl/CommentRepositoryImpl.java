@@ -1,10 +1,8 @@
 package com.leverx.blog.repository.impl;
 
-import com.leverx.blog.model.Article;
 import com.leverx.blog.model.Comment;
 import com.leverx.blog.repository.CommentRepository;
 import com.leverx.blog.service.pages.Page;
-import com.leverx.blog.service.sort.ArticleSortProvider;
 import com.leverx.blog.service.sort.CommentSortProvider;
 import lombok.NoArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -26,10 +24,13 @@ public class CommentRepositoryImpl implements CommentRepository {
             "SELECT c from Comment c where c.article.id = :articleId AND c.id =:commentId AND c.article.status =:public";
     private static final String SELECT_C_FROM_COMMENT_C_WHERE_C_ARTICLE_ID_ARTICLE_ID =
             "SELECT c from Comment c where c.article.id = :articleId AND c.article.status =:public";
+    private static final String DELETE_FROM_COMMENT_C_WHERE_C_USER_ID_ID =
+            "DELETE FROM Comment c WHERE c.user.id =:userId";
     private static final String ARTICLE_ID = "articleId";
     private static final String COMMENT_ID = "commentId";
     private static final String PUBLIC = "public";
     private static final String ARTICLE = "article";
+    private static final String ID = "userId";
 
     @PersistenceContext
     EntityManager entityManager;
@@ -61,6 +62,13 @@ public class CommentRepositoryImpl implements CommentRepository {
     public void delete(Integer id) {
         Comment reference = entityManager.getReference(Comment.class, id);
         entityManager.remove(reference);
+    }
+
+    @Override
+    public void deleteByUser(Integer id) {
+        Query query = entityManager.createQuery(DELETE_FROM_COMMENT_C_WHERE_C_USER_ID_ID);
+        query.setParameter(ID, id);
+        query.executeUpdate();
     }
 
     @SuppressWarnings(value = "unchecked")

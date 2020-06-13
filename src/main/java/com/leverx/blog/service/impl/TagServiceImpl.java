@@ -75,7 +75,14 @@ public class TagServiceImpl implements TagService {
     public Map<String, Integer> amountOfArticlesWithGivenTag(Integer id) {
         Map<String, Integer> tags = new HashMap<>();
         Integer amountOfArticles = tagRepository.amountOfArticlesWithGivenTag(id);
-        String name = tagRepository.findById(id).get().getName();
+        String name = tagRepository.findById(id)
+                .isPresent()
+                ?
+                tagRepository
+                        .findById(id)
+                        .get()
+                        .getName()
+                : THERE_IS_NO_TAG_WITH_ID_S;
         tags.put(name, amountOfArticles);
         return tags;
     }

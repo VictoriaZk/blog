@@ -3,6 +3,8 @@ package com.leverx.blog.model;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
@@ -30,6 +32,7 @@ public class Article {
 
     @JoinColumn(name = "author_id")
     @ManyToOne(fetch = FetchType.EAGER)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private User user;
 
     @Column(updatable = false)

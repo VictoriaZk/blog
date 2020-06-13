@@ -69,7 +69,9 @@ public class TagRepositoryImpl implements TagRepository {
     public Optional<Tag> findByName(String name) {
         Query query = entityManager.createQuery(SELECT_T_FROM_TAG_T_WHERE_T_NAME_NAME);
         query.setParameter(NAME, name);
-        return Optional.ofNullable((Tag) query.getSingleResult());
+        return query.getResultList().size() == 0 ?
+                Optional.empty() :
+                Optional.ofNullable((Tag) query.getSingleResult());
     }
 
     @Override

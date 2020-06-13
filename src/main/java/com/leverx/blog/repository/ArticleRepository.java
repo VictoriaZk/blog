@@ -1,7 +1,6 @@
 package com.leverx.blog.repository;
 
 import com.leverx.blog.model.Article;
-import com.leverx.blog.model.Tag;
 import com.leverx.blog.service.pages.Page;
 import com.leverx.blog.service.sort.ArticleSortProvider;
 
@@ -27,5 +26,5 @@ public interface ArticleRepository {
 
     List<Article> findByName(String name);
 
-    List<Article> findByTags(List<Tag> tags);
+    List<Integer> findByTags(Integer id);
 }

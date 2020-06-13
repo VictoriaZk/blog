@@ -2,7 +2,6 @@ package com.leverx.blog.repository.impl;
 
 import com.leverx.blog.model.Article;
 import com.leverx.blog.model.Status;
-import com.leverx.blog.model.Tag;
 import com.leverx.blog.repository.ArticleRepository;
 import com.leverx.blog.service.pages.Page;
 import com.leverx.blog.service.sort.ArticleSortProvider;
@@ -27,12 +26,10 @@ public class ArticleRepositoryImpl implements ArticleRepository {
             "SELECT a from Article a where a.status = :status";
     private static final String SELECT_A_FROM_ARTICLE_A_WHERE_A_TITLE_NAME =
             "SELECT a from Article a where a.title = :name";
-    private static final String SELECT_ARTICLE_ID_FROM_ARTICLE_TAG =
-            "SELECT article_id FROM article_tag";
+    private static final String SELECT_FROM_ARTICLE_TAG_WHERE_TAG_ID =
+            "SELECT article_id FROM article_tag WHERE tag_id = ?";
     private static final String NAME = "name";
     private static final String STATUS = "status";
-    private static final String PUBLIC = "public";
-    private static final String TITLE = "title";
 
     @PersistenceContext
     EntityManager entityManager;
@@ -86,11 +83,11 @@ public class ArticleRepositoryImpl implements ArticleRepository {
         return query.getResultList();
     }
 
-    //bad
+    @SuppressWarnings(value = "unchecked")
     @Override
-    public List<Article> findByTags(List<Tag> tags) {
-        Query query = entityManager.createNativeQuery("SELECT * FROM article_tag WHERE tag_id = ?");
-        tags.stream().forEach(tag -> query.setParameter(1, tag.getId()));
+    public List<Integer> findByTags(Integer id) {
+        Query query = entityManager.createNativeQuery(SELECT_FROM_ARTICLE_TAG_WHERE_TAG_ID);
+        query.setParameter(1, id);
         return query.getResultList();
     }
 

@@ -12,6 +12,10 @@ import org.thymeleaf.spring5.SpringTemplateEngine;
 import org.thymeleaf.spring5.templateresolver.SpringResourceTemplateResolver;
 import org.thymeleaf.spring5.view.ThymeleafViewResolver;
 
+/**
+ * This configuration class was made for my future plans.
+ * If i start to do for example html pages i will need it.
+ */
 
 @Configuration
 @ComponentScan("com.leverx.blog")
