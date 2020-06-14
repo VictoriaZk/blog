@@ -82,10 +82,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                             getAuthority(user)
                     ))
                     .orElseThrow(() -> new UsernameNotFoundException(INVALID_USERNAME_OR_PASSWORD));
-//            String name = "vika.zhak1999";
-//            String password = "$2a$04$k/8K.hNYm6MDRhcXok8FiOLVCULs3zHGYNFfxKpfZ/RubyOGHCsuu";
-//            return new org.springframework.security.core.userdetails.User(name, password,
-//                    Collections.singletonList(new SimpleGrantedAuthority("ADMIN")));
         }
 
         private List<SimpleGrantedAuthority> getAuthority(User user) {
