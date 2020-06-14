@@ -12,4 +12,6 @@ Step 6: Authentication = 30 hours
 
 Step 7: Testing = 14 hours
 
+Step 8: Run application with docker = 8 hours
+
 
