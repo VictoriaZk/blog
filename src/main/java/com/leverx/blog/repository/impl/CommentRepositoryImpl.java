@@ -1,6 +1,11 @@
 package com.leverx.blog.repository.impl;
 
+import com.leverx.blog.model.Article;
 import com.leverx.blog.model.Comment;
+import com.leverx.blog.model.Status;
+import com.leverx.blog.model.Tag;
+import com.leverx.blog.model.metamodel.Article_;
+import com.leverx.blog.model.metamodel.Comment_;
 import com.leverx.blog.repository.CommentRepository;
 import com.leverx.blog.service.pages.Page;
 import com.leverx.blog.service.sort.CommentSortProvider;
@@ -10,6 +15,7 @@ import org.springframework.stereotype.Repository;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
@@ -42,6 +48,22 @@ public class CommentRepositoryImpl implements CommentRepository {
 
     @Override
     public Optional<Comment> findById(Integer articleId, Integer commentId) {
+        /*CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Comment> criteriaQuery = criteriaBuilder.createQuery(Comment.class);
+        Root<Comment> commentRoot = criteriaQuery.from(Comment.class);
+
+        Predicate criteria = criteriaBuilder.conjunction();
+        Predicate predicateArticle = criteriaBuilder.equal(
+                commentRoot.get(Comment_.ARTICLE), articleId);
+        Predicate predicateComment= criteriaBuilder.equal(
+                commentRoot.get(Comment_.ID), commentId);
+        criteria = criteriaBuilder.and(criteria, predicateArticle, predicateComment);
+        criteriaQuery.select(commentRoot).where(criteria);
+        TypedQuery<Comment> query = entityManager.createQuery(criteriaQuery);
+        return query.getResultList().size() == 0 ?
+                Optional.empty() :
+                Optional.ofNullable(query.getSingleResult());
+         */
         Query query = entityManager.createQuery(SELECT_C_FROM_COMMENT_C_WHERE_C_ARTICLE_ID_ARTICLE_ID_AND_C_ID_COMMENT_ID);
         query.setParameter(ARTICLE_ID, articleId);
         query.setParameter(COMMENT_ID, commentId);
@@ -49,6 +71,7 @@ public class CommentRepositoryImpl implements CommentRepository {
         return query.getResultList().size() == 0 ?
                 Optional.empty() :
                 Optional.ofNullable((Comment) query.getSingleResult());
+
     }
 
     @Override
@@ -71,7 +94,7 @@ public class CommentRepositoryImpl implements CommentRepository {
         query.executeUpdate();
     }
 
-    @SuppressWarnings(value = "unchecked")
+
     @Override
     public List<Comment> findAll(Integer id) {
         Query query = entityManager.createQuery(SELECT_C_FROM_COMMENT_C_WHERE_C_ARTICLE_ID_ARTICLE_ID);
@@ -85,6 +108,7 @@ public class CommentRepositoryImpl implements CommentRepository {
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         CriteriaQuery<Comment> criteriaQuery = criteriaBuilder.createQuery(Comment.class);
         Root<Comment> root = criteriaQuery.from(Comment.class);
+
         criteriaQuery.where(new Predicate[]{criteriaBuilder.and(criteriaBuilder.equal(root.get(ARTICLE), id))});
         criteriaQuery.orderBy(commentSortProvider.getSortOrder(root, criteriaBuilder));
         Integer offset = page.getOffset();
